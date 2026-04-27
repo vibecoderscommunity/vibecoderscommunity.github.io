@@ -1,0 +1,13 @@
+{
+  "name": "vibecoderscommunity.github.io",
+  "version": "1.0.0",
+  "description": "Vibe Coders Community Website",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^8.0.10"
+  }
+}
