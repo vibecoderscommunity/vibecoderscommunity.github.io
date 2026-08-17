@@ -1,0 +1,93 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Vibe Coders Meetup — Tokyo & Singapore</title>
+<link rel="stylesheet" href="_ds/vibe-coders-design-system-6b22974d-8a14-4fd6-9fc9-559c31a92f55/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/vibe-coders-design-system-6b22974d-8a14-4fd6-9fc9-559c31a92f55/tokens/colors.css">
+<link rel="stylesheet" href="_ds/vibe-coders-design-system-6b22974d-8a14-4fd6-9fc9-559c31a92f55/tokens/typography.css">
+<link rel="stylesheet" href="_ds/vibe-coders-design-system-6b22974d-8a14-4fd6-9fc9-559c31a92f55/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/vibe-coders-design-system-6b22974d-8a14-4fd6-9fc9-559c31a92f55/tokens/effects.css">
+<link rel="stylesheet" href="_ds/vibe-coders-design-system-6b22974d-8a14-4fd6-9fc9-559c31a92f55/styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="_ds/vibe-coders-design-system-6b22974d-8a14-4fd6-9fc9-559c31a92f55/_ds_bundle.js"></script>
+<script src="data.js"></script>
+<style>html{scroll-behavior:smooth}body{margin:0}</style></head><body><div id="root"></div>
+<script type="text/babel" src="shared.jsx"></script>
+<script type="text/babel">
+const {Button,Card,Tag}=window.VibeCodersDesignSystem_6b2297;
+function ChapterCard({logo,name,next,last,href,flavor}){
+  return <div style={{background:"var(--surface, #fff)",border:"2px solid var(--ink)",boxShadow:"4px 4px 0 var(--ink)",padding:"var(--space-5)",display:"grid",gridTemplateColumns:"120px 1fr",gap:"var(--space-5)",alignItems:"center"}} data-screen-label={"Chapter "+name}>
+    <img src={logo} alt={"Vibe Coders "+name+" logo"} style={{width:120,height:120,objectFit:"contain",imageRendering:"pixelated",border:"2px solid var(--ink)",background:"#fdfcfa"}}/>
+    <div style={{display:"flex",flexDirection:"column",gap:"var(--space-2)",alignItems:"flex-start"}}>
+      <h3 style={{fontFamily:"var(--font-pixel)",fontSize:"var(--text-xl)",margin:0,textTransform:"uppercase"}}>{name}</h3>
+      <div style={{fontFamily:"var(--font-mono)",fontSize:"var(--text-xs)",fontWeight:700,letterSpacing:"var(--tracking-caps)",textTransform:"uppercase"}}><span style={{background:flavor,border:"2px solid var(--ink)",padding:"1px 8px"}}>Next → {next}</span></div>
+      <div style={{fontFamily:"var(--font-mono)",fontSize:"var(--text-xs)",fontWeight:700,letterSpacing:"var(--tracking-caps)",textTransform:"uppercase",color:"var(--text-muted)"}}>Last → {last}</div>
+      <div style={{marginTop:"var(--space-2)"}}><Button size="sm" onClick={()=>window.open(href,"_blank")}>RSVP on lu.ma ▸</Button></div>
+    </div>
+  </div>;
+}
+function PhotoRotator(){
+  const events=window.VBT_EVENTS;
+  const [i,setI]=React.useState(0);
+  React.useEffect(()=>{const t=setInterval(()=>setI(v=>(v+1)%events.length),3000);return()=>clearInterval(t)},[]);
+  const ev=events[i];
+  return <div style={{justifySelf:"center",width:"100%",maxWidth:380}}>
+    <div style={{border:"2px solid var(--ink)",boxShadow:"6px 6px 0 var(--ink)",background:"#fdfcfa",aspectRatio:"1",overflow:"hidden"}}>
+      <img src={ev.img} alt={ev.title} style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
+    </div>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:"var(--space-3)",fontFamily:"var(--font-mono)",fontSize:"var(--text-xs)",fontWeight:700,letterSpacing:"var(--tracking-caps)",textTransform:"uppercase"}}>
+      <span>{ev.title}</span>
+      <span style={{color:"var(--text-faint)"}}>{String(i+1).padStart(2,"0")}/{String(events.length).padStart(2,"0")}</span>
+    </div>
+    <div style={{display:"flex",gap:"var(--space-2)",marginTop:"var(--space-2)"}}>
+      {events.map((e,n)=><button key={e.id} onClick={()=>setI(n)} aria-label={"Photo "+(n+1)} style={{width:12,height:12,padding:0,border:"2px solid var(--ink)",background:n===i?"var(--red)":"var(--paper)",cursor:"pointer"}}></button>)}
+    </div>
+  </div>;
+}
+function Landing(){
+  const events=window.VBT_EVENTS;
+  const latest=events.find(e=>e.id===8);
+  return <div>
+    <SiteHeader/>
+    <section data-screen-label="Hero" style={{background:"radial-gradient(circle at 68% 30%, #efb0a0 0%, #f2cfc2 32%, var(--paper) 68%)",borderBottom:"3px solid var(--ink)"}}>
+      <div style={{maxWidth:"var(--container)",margin:"0 auto",padding:"var(--space-8) var(--space-5) var(--space-7)",display:"grid",gridTemplateColumns:"1.2fr 1fr",gap:"var(--space-7)",alignItems:"center"}}>
+        <div>
+          <div style={{fontFamily:"var(--font-mono)",fontSize:"var(--text-xs)",fontWeight:700,letterSpacing:"var(--tracking-caps)",textTransform:"uppercase",marginBottom:"var(--space-3)"}}>Tokyo · Singapore</div>
+          <h1 style={{fontFamily:"var(--font-pixel)",fontSize:"var(--text-3xl)",margin:0,textTransform:"uppercase",lineHeight:1.1}}>Vibe C<span style={{color:"var(--red)"}}>o</span>ders Meetup<Blink/></h1>
+          <p style={{fontSize:"var(--text-base)",maxWidth:520,margin:"var(--space-5) 0 0"}}>A cozy meetup for people who build things with AI — novices and enthusiasts, fun project shareouts, AI-tool discussions, workshops, free pizza. We're an English-speaking meetup (all languages welcome though!).</p>
+        </div>
+        <PhotoRotator/>
+      </div>
+    </section>
+    <section id="chapters" data-screen-label="Chapters" style={{maxWidth:"var(--container)",margin:"0 auto",padding:"var(--space-7) var(--space-5)"}}>
+      <SectionTitle>Two cities, one vibe</SectionTitle>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"var(--space-5)"}}>
+        <ChapterCard logo="assets/logo-tokyo.avif" name="Tokyo" next="WED, AUG 19" last="MODELS MODELS MODELS · JUL" href={window.VBT_LINKS.tokyo} flavor="var(--gold)"/>
+        <ChapterCard logo="assets/logo-sg.png" name="Singapore" next="TBA — JOIN THE LIST" last="FRI, JUL 31" href={window.VBT_LINKS.sg} flavor="var(--lime)"/>
+      </div>
+    </section>
+    <NewsletterBand/>
+    <section data-screen-label="Latest recap" style={{maxWidth:"var(--container)",margin:"0 auto",padding:"var(--space-7) var(--space-5)"}}>
+      <SectionTitle>Latest recap</SectionTitle>
+      <div style={{display:"grid",gridTemplateColumns:"340px 1fr",gap:"var(--space-6)",alignItems:"start"}}>
+        <Card image={latest.img} imageAlt={latest.title}/>
+        <div style={{paddingTop:"var(--space-2)"}}>
+          <div style={{display:"inline-block",background:latest.flavor,border:"2px solid var(--ink)",padding:"2px 10px",fontFamily:"var(--font-mono)",fontSize:"var(--text-xs)",fontWeight:700,textTransform:"uppercase",letterSpacing:"var(--tracking-caps)"}}>Workshop, complete</div>
+          <h3 style={{fontFamily:"var(--font-heading)",fontSize:"var(--text-3xl)",margin:"var(--space-3) 0",textTransform:"uppercase"}}>{latest.title}</h3>
+          <div style={{fontFamily:"var(--font-mono)",fontSize:"var(--text-sm)",fontWeight:700,letterSpacing:"var(--tracking-wide)",marginBottom:"var(--space-3)"}}>{latest.meta}</div>
+          <p style={{maxWidth:520,fontSize:"var(--text-sm)",color:"var(--text-muted)"}}>A packed room for our local-models session — long lines, hands-on prompting, and proof that you don't need a massive GPU to start vibe coding with Gemma.</p>
+          <div style={{display:"flex",gap:"var(--space-2)",margin:"var(--space-4) 0"}}>{latest.tags.map(t=><Tag key={t} flavor={latest.flavor}>{t}</Tag>)}</div>
+          <Button onClick={()=>{window.location.href="event.html"}}>Read the recap →</Button>
+        </div>
+      </div>
+    </section>
+    <section id="events" data-screen-label="Past events" style={{maxWidth:"var(--container)",margin:"0 auto",padding:"0 var(--space-5) var(--space-7)"}}>
+      <SectionTitle>Past events</SectionTitle>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"var(--space-5)"}}>
+        {events.map(ev=><EventCard key={ev.id} ev={ev}/>)}
+      </div>
+    </section>
+    <SiteFooter/>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<Landing/>);
+</script></body></html>

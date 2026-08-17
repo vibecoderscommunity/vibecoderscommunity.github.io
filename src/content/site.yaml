@@ -1,0 +1,64 @@
+# ---------------------------------------------------------------------------
+# Site-wide content. Edit this file to change anything outside of event pages:
+# the tagline, the chapter cards, the newsletter copy and the footer.
+# No HTML or Vue changes required.
+# ---------------------------------------------------------------------------
+
+title: Vibe Coders Meetup
+tagline: Tokyo · Singapore
+description: >-
+  A cozy meetup for people who build things with AI — novices and enthusiasts,
+  fun project shareouts, AI-tool discussions, workshops, free pizza. We're an
+  English-speaking meetup (all languages welcome though!).
+
+# Shown in the footer, and used as the <meta name="description"> fallback.
+about: >-
+  A cozy meetup for vibe-coding novices and enthusiasts. Fun project shareouts,
+  AI-tool discussions, workshops, and free pizza.
+
+# Absolute URL of the deployed site — used for canonical links and og:url.
+url: https://vibecoders.fyi
+
+# ---------------------------------------------------------------------------
+# Chapters — rendered as the "Two cities, one vibe" cards.
+#   next.label   free text; shown in the flavour-coloured chip
+#   next.flavor  one of: gold lime purple peach red-tint light-navy light-blue
+#   last         free text; the muted "LAST → …" line
+#   logo         path relative to this file; any image format Vite can handle
+# ---------------------------------------------------------------------------
+chapters:
+  - id: tokyo
+    name: Tokyo
+    logo: ./chapters/tokyo.avif
+    luma: https://lu.ma/vibecoders-tokyo
+    next:
+      label: WED, AUG 19
+      flavor: gold
+    last: MODELS MODELS MODELS · JUL
+
+  - id: singapore
+    name: Singapore
+    logo: ./chapters/singapore.png
+    luma: https://lu.ma/vibecoders-sg
+    next:
+      label: TBA — JOIN THE LIST
+      flavor: lime
+    last: FRI, JUL 31
+
+# ---------------------------------------------------------------------------
+# Newsletter band copy. `highlight` is the word rendered in lime.
+# ---------------------------------------------------------------------------
+newsletter:
+  heading: Sign up to be {highlight} of future events
+  highlight: notified
+  sub: >-
+    The next meetup in Tokyo and Singapore, straight to your inbox.
+    No spam, unsubscribe whenever.
+  success: You're in! See you at the next one
+  cities:
+    - value: tokyo
+      label: Tokyo
+    - value: singapore
+      label: Singapore
+    - value: else
+      label: Somewhere else

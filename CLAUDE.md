@@ -5,20 +5,77 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-pnpm install       # Install dependencies
-pnpm run dev       # Start Vite dev server (http://localhost:5173)
-pnpm run build     # Bundle and minify for production
-pnpm run preview   # Preview production build locally
+pnpm install              # Install dependencies
+pnpm run dev              # Vite dev server (http://localhost:5173)
+pnpm run build            # Build + prerender all pages into dist/client
+pnpm run preview          # Build, then serve via wrangler dev (http://localhost:8787)
+pnpm run deploy           # Build and deploy to Cloudflare
+pnpm run typecheck        # Type-check app, Worker and build scripts
+pnpm run db:migrate:local # Apply D1 migrations to the local database
+pnpm run db:migrate       # Apply D1 migrations to production
 ```
+
+Use `pnpm run preview` when verifying anything involving `/api/*`, static
+routing, or 404 behaviour — the Vite dev server alone does not exercise the
+Worker.
 
 ## Architecture
 
-This is a single-page static website with no framework — just three files:
+Vue 3 site, prerendered to static HTML, deployed as a Cloudflare Worker.
 
-- `index.html` — page structure and content (glassmorphism card with community links)
-- `styles.css` — all styling (CSS custom properties, glassmorphism, animations, responsive layout)
-- `script.js` — interactive effects (3D card tilt on mousemove, cursor-tracking glow)
+**Content is data, not code.** Everything editable lives in `src/content/`:
+`site.yaml` for site-wide copy and chapter cards, and one folder per event under
+`events/` containing `index.md`, `poster.*` and an optional `photos/` folder.
+Never hardcode event data into a component — add or edit content files instead.
+See `docs/content-authoring.md`.
 
-Vite is used only as a dev server with HMR; it is not required for deployment. The site is served directly from the `main` branch via GitHub Pages (no Jekyll build step, hence `.nojekyll`).
+**The content pipeline** is `scripts/content-plugin.js`, a Vite plugin exposing
+`src/content/` as a `virtual:content` module. It parses frontmatter with
+gray-matter, renders Markdown with markdown-it, auto-discovers posters and
+photos, and rewrites image paths into real `import` statements so Vite's asset
+pipeline hashes them. `src/lib/content.ts` wraps that module with types and
+derived values (`latestRecap`, `flavorColor`).
 
-The responsive breakpoint for button stacking is `640px`.
+**Prerendering** is `scripts/prerender.js`. `pnpm run build` runs a client build,
+an SSR build, then renders every route in `src/lib/routes.ts` to static HTML plus
+`sitemap.xml` and `robots.txt`. Routes are derived from content, so there is no
+route list to maintain when adding an event. `/404` is written to `404.html`,
+which Cloudflare serves for unknown paths.
+
+**`src/main.ts`** exports a `createApp(ssr)` factory shared by `entry-client.ts`
+and `entry-server.ts`. Anything added to the app must go through it so client and
+SSR stay identical — a divergence shows up as a hydration mismatch.
+
+Note that `/events/<unknown-slug>` matches the event route on the client but is
+served `404.html` by Cloudflare. `EventPage.vue` therefore renders
+`NotFoundPage` when the slug is unknown, so the markup matches on both sides.
+
+**The Worker** (`worker/index.ts`) handles only `/api/*`; `run_worker_first` in
+`wrangler.jsonc` routes everything else straight to static assets. Newsletter
+signups go to Cloudflare D1 (`migrations/`). See `docs/cloudflare-setup.md`.
+
+## Design system
+
+The site implements the Vibe Coders Design System, whose source of truth is
+`docs/design-system/`. Tokens are copied verbatim into `src/styles/tokens/` —
+edit them there only to re-sync with the design system, never to tweak a value
+for one component.
+
+Non-negotiable brand rules:
+
+- `border-radius: 0` everywhere; shadows are hard pixel offsets
+  (`4px 4px 0 var(--ink)`), never blurred
+- Hover lifts (`translate(-2px,-2px)`, shadow grows to 6px); press sinks
+  (`translate(2px,2px)`, shadow collapses); 120–180ms; no fades or bounces
+- Fonts: Silkscreen (pixel display), Handjet (section headings), JetBrains Mono
+  (body/UI)
+- Event "flavors" are named tokens (`gold`, `lime`, `purple`, `peach`,
+  `red-tint`, `light-navy`, `light-blue`) resolved by `flavorColor()`. `navy` and
+  `blue` are too dark to sit behind ink text — don't use them as event flavours.
+
+Components use scoped `<style>` blocks referencing tokens. The design reference
+in `docs/design-spec/` uses inline styles because it is a React prototype; do not
+copy that approach.
+
+Layout: 1080px container, 680px text measure, 8px spacing grid. Breakpoints in
+use are 920px, 860px, 780px, 620px and 560px.

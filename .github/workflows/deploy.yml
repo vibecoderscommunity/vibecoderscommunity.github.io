@@ -1,0 +1,43 @@
+# Deploys the site to Cloudflare on every push to `main`.
+#
+# Requires two repository secrets (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN   a token with the "Edit Cloudflare Workers" template
+#   CLOUDFLARE_ACCOUNT_ID  from the Cloudflare dashboard sidebar
+#
+# Until those are set, this workflow fails on the deploy step — the build and
+# type-check steps still run and are useful on their own. Delete this file if
+# you would rather deploy by hand with `pnpm run deploy`.
+
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm run typecheck
+
+      - run: pnpm run build
+
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # The build already ran above; just upload.
+          command: deploy
