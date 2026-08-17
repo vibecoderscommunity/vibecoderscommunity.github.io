@@ -5,9 +5,10 @@
  * touching a `.vue` or `.html` file:
  *
  *   src/content/site.yaml                     site-wide copy + chapter cards
+ *   src/content/hero/*.(avif|webp|png|jpg)    hero rotator images, sorted by name
  *   src/content/events/<YYYY-MM-DD-slug>/
  *       index.md                              frontmatter + recap markdown
- *       poster.(avif|webp|png|jpg)            card / hero image
+ *       poster.(avif|webp|png|jpg)            card image
  *       photos/*.(avif|webp|png|jpg)          recap photo grid, sorted by name
  *
  * Images are emitted as real `import` statements so Vite hashes, optimises and
@@ -174,6 +175,31 @@ function loadEvent(dir, assets) {
   )
 }
 
+/**
+ * Hero rotator images from `src/content/hero/`, sorted by filename.
+ *
+ * The caption under the rotator comes from the filename: a leading `NN-` index
+ * and the extension are stripped, and separators become spaces, so
+ * `03-gemma-workshop.avif` reads as "GEMMA WORKSHOP". Renaming the file is how
+ * you change the caption — there is nothing else to edit.
+ */
+function loadHero(contentDir, assets) {
+  const dir = path.join(contentDir, 'hero')
+
+  return readDir(dir)
+    .filter((entry) => entry.isFile() && IMAGE_RE.test(entry.name))
+    .map((entry) => entry.name)
+    .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }))
+    .map((name) => ({
+      src: { __asset: assets.ref(path.join(dir, name)) },
+      caption: name
+        .replace(IMAGE_RE, '')
+        .replace(/^\d+[-_.\s]*/, '')
+        .replace(/[-_]+/g, ' ')
+        .trim(),
+    }))
+}
+
 function loadSite(contentDir, assets) {
   const file = path.join(contentDir, 'site.yaml')
   const site = YAML.parse(fs.readFileSync(file, 'utf8')) || {}
@@ -201,8 +227,9 @@ export function buildContent(root) {
   }
 
   const site = loadSite(contentDir, assets)
+  const hero = loadHero(contentDir, assets)
 
-  return { assets, events, site }
+  return { assets, events, site, hero }
 }
 
 /** Routes to statically prerender. Used by the build script. */
@@ -227,11 +254,12 @@ export default function contentPlugin() {
 
     load(id) {
       if (id !== RESOLVED_ID) return
-      const { assets, events, site } = buildContent(root)
+      const { assets, events, site, hero } = buildContent(root)
       return [
         assets.imports(),
         `export const site = ${serialize(site)}`,
         `export const events = ${serialize(events)}`,
+        `export const hero = ${serialize(hero)}`,
       ]
         .filter(Boolean)
         .join('\n\n')

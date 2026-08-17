@@ -89,40 +89,56 @@ async function listSubscribers(request: Request, env: Env): Promise<Response> {
     return json({ error: 'Not authorised.' }, 401)
   }
 
-  const { results } = await env.DB.prepare(
-    `SELECT email, city, created_at
-       FROM subscribers
-      WHERE unsubscribed_at IS NULL
-      ORDER BY created_at DESC`,
-  ).all()
+  try {
+    const { results } = await env.DB.prepare(
+      `SELECT email, city, created_at
+         FROM subscribers
+        WHERE unsubscribed_at IS NULL
+        ORDER BY created_at DESC`,
+    ).all()
 
-  return json({ count: results.length, subscribers: results })
+    return json({ count: results.length, subscribers: results })
+  } catch (error) {
+    // Never surface the raw error: D1 messages carry SQL and file paths.
+    console.error('listSubscribers failed', error)
+    return json({ error: 'Could not read the subscriber list.' }, 500)
+  }
 }
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const url = new URL(request.url)
-
-    if (url.pathname === '/api/subscribe') {
-      if (request.method !== 'POST') {
-        return json({ error: 'Method not allowed.' }, 405)
-      }
-      return subscribe(request, env)
+    try {
+      return await route(request, env)
+    } catch (error) {
+      // Belt and braces: an uncaught throw must never return a stack trace.
+      console.error('unhandled worker error', error)
+      return json({ error: 'Something went wrong.' }, 500)
     }
-
-    if (url.pathname === '/api/subscribers') {
-      if (request.method !== 'GET') {
-        return json({ error: 'Method not allowed.' }, 405)
-      }
-      return listSubscribers(request, env)
-    }
-
-    if (url.pathname.startsWith('/api/')) {
-      return json({ error: 'Not found.' }, 404)
-    }
-
-    // Static assets: `run_worker_first` only routes /api/* here, but keep the
-    // fallback so the Worker is correct even if that config changes.
-    return env.ASSETS.fetch(request)
   },
 } satisfies ExportedHandler<Env>
+
+async function route(request: Request, env: Env): Promise<Response> {
+  const url = new URL(request.url)
+
+  if (url.pathname === '/api/subscribe') {
+    if (request.method !== 'POST') {
+      return json({ error: 'Method not allowed.' }, 405)
+    }
+    return subscribe(request, env)
+  }
+
+  if (url.pathname === '/api/subscribers') {
+    if (request.method !== 'GET') {
+      return json({ error: 'Method not allowed.' }, 405)
+    }
+    return listSubscribers(request, env)
+  }
+
+  if (url.pathname.startsWith('/api/')) {
+    return json({ error: 'Not found.' }, 404)
+  }
+
+  // Static assets: `run_worker_first` only routes /api/* here, but keep the
+  // fallback so the Worker is correct even if that config changes.
+  return env.ASSETS.fetch(request)
+}

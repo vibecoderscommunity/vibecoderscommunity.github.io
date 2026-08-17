@@ -10,7 +10,7 @@ import DsCard from '@/components/ds/DsCard.vue'
 import DsTag from '@/components/ds/DsTag.vue'
 import DsButton from '@/components/ds/DsButton.vue'
 import SiteWordmark from '@/components/SiteWordmark.vue'
-import { allEvents, flavorColor, latestRecap, site } from '@/lib/content'
+import { allEvents, flavorColor, heroImages, latestRecap, site } from '@/lib/content'
 import { useHead } from '@/lib/head'
 
 useHead(() => ({
@@ -19,8 +19,6 @@ useHead(() => ({
   path: '/',
 }))
 
-// Only events with artwork can appear in the hero rotator.
-const rotatorItems = computed(() => allEvents.filter((event) => event.poster))
 const recapFlavor = computed(() => flavorColor(latestRecap?.flavor))
 </script>
 
@@ -35,7 +33,7 @@ const recapFlavor = computed(() => flavorColor(latestRecap?.flavor))
           </h1>
           <p class="hero__body">{{ site.description }}</p>
         </div>
-        <PhotoRotator :items="rotatorItems" />
+        <PhotoRotator :items="heroImages" />
       </div>
     </section>
 

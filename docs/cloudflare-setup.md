@@ -72,8 +72,8 @@ The output ends with a block like this:
   ]
 ```
 
-> The database id is **not** a secret — it's safe to commit. It identifies the
-> database; access is granted by the binding, which only your Worker has.
+> **Is the database id a secret?** No, and it has to be committed — see
+> [Secrets and configuration](#secrets-and-configuration) below for why.
 
 ---
 
@@ -154,6 +154,82 @@ Then update `url:` in `src/content/site.yaml` to match, so canonical links and
 
 ---
 
+## Secrets and configuration
+
+**This repository is public.** Here is exactly what lives where, and why.
+
+### Never committed — put these in `.env`
+
+`.env` is gitignored. Copy the committed template and fill it in:
+
+```bash
+cp .env.example .env
+```
+
+| Variable | What it is |
+| --- | --- |
+| `ADMIN_TOKEN` | Shared secret guarding `GET /api/subscribers`. Unset ⇒ the endpoint is disabled and always returns 401. |
+| `TURNSTILE_SECRET` | Only if you add Turnstile to the form. |
+| `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` | Only needed to deploy without `wrangler login`. CI uses GitHub Actions secrets instead. |
+
+`wrangler dev` reads `.env` automatically and exposes the values to the Worker
+as `env.*`. You can confirm it worked — the startup banner lists the binding and
+prints the value as `"(hidden)"`:
+
+```
+env.ADMIN_TOKEN ("(hidden)")    Environment Variable    local
+```
+
+> ⚠️ **Never prefix a secret with `VITE_`.** Vite inlines `VITE_*` variables
+> into the browser bundle, which would publish the value to every visitor.
+> Nothing in this project uses that prefix, and nothing should.
+
+> ⚠️ **Use `.env` *or* `.dev.vars`, not both.** Cloudflare ignores `.env`
+> entirely when a `.dev.vars` file exists. This project standardises on `.env`;
+> `.dev.vars` is gitignored too, purely as a safety net.
+
+### Production secrets
+
+`.env` is for local development only — it is never uploaded. Set production
+values on Cloudflare, where they are encrypted at rest:
+
+```bash
+pnpm exec wrangler secret put ADMIN_TOKEN
+pnpm exec wrangler secret list
+```
+
+### Committed on purpose — not secrets
+
+| Value | Why it's safe |
+| --- | --- |
+| `database_id` in `wrangler.jsonc` | A resource identifier, not a credential. Using it requires an authenticated API token scoped to your account, which is not in the repo. This is what Cloudflare's own docs and templates do. |
+| `database_name`, bindings, routes | Plain configuration. |
+
+**Why `database_id` can't move to `.env`:** Wrangler does not perform variable
+substitution inside `wrangler.jsonc`. A `${VAR}` in that file is passed through
+as a literal string rather than expanded, so moving it out would simply produce
+a broken deploy. Non-secret config belongs in the config file; only secrets
+belong in `.env`.
+
+If you nevertheless want the id out of the repo, the only supported route is to
+generate `wrangler.jsonc` at deploy time from a gitignored template — which
+means CI has to rebuild it too. That is real ongoing cost to hide a value that
+grants nothing on its own, so it isn't recommended.
+
+### Rotating a leaked secret
+
+If `ADMIN_TOKEN` is ever exposed, rotate rather than delete:
+
+```bash
+pnpm exec wrangler secret put ADMIN_TOKEN     # paste a fresh value
+```
+
+Generate one with `openssl rand -hex 32`. If a Cloudflare **API token** leaks,
+revoke it in the dashboard under **My Profile → API Tokens** immediately — that
+one is a real credential.
+
+---
+
 ## Reading the newsletter list
 
 The quickest way:
@@ -174,7 +250,8 @@ pnpm exec wrangler d1 execute vibecoders-db --remote --json \
 ### Over HTTP
 
 There's also a `GET /api/subscribers` endpoint, off by default. To enable it,
-set a token:
+set a token in production (and in `.env` for local dev — see
+[Secrets and configuration](#secrets-and-configuration)):
 
 ```bash
 pnpm exec wrangler secret put ADMIN_TOKEN

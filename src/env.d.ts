@@ -54,6 +54,14 @@ declare module 'virtual:content' {
     }
   }
 
+  /** One image in the hero rotator, from `src/content/hero/`. */
+  export interface HeroImage {
+    src: string
+    /** Derived from the filename; shown as the mono caps caption. */
+    caption: string
+  }
+
   export const site: Site
   export const events: EventEntry[]
+  export const hero: HeroImage[]
 }

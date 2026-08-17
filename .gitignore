@@ -28,4 +28,12 @@ dist
 
 # Cloudflare / Wrangler local state
 .wrangler
+
+# Secrets — never commit these. `.env.example` is the committed template.
+.env
+.env.*
+!.env.example
 .dev.vars
+.dev.vars.*
+*.pem
+*.key

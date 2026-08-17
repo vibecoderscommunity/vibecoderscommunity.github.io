@@ -7,13 +7,16 @@ the rest.
 ```
 src/content/
 ├── site.yaml                          site-wide copy, chapter cards, newsletter
+├── hero/                              images for the rotating frame in the hero
+│   ├── 01-packed-room.jpg
+│   └── 02-gemma-workshop.jpg
 ├── chapters/
 │   ├── tokyo.avif                     chapter logos
 │   └── singapore.png
 └── events/
     └── 2026-07-08-local-models-with-gemma-4/
         ├── index.md                   frontmatter + recap copy
-        ├── poster.avif                card image / hero image
+        ├── poster.avif                card image
         └── photos/                    recap photo grid (optional)
             ├── 01.jpg
             └── 02.jpg
@@ -127,6 +130,31 @@ that the recap is coming.
 
 ---
 
+## Hero photos
+
+The rotating square frame on the landing page comes from `src/content/hero/`.
+Drop images in; they rotate every 3 seconds, **sorted by filename**:
+
+```
+src/content/hero/
+├── 01-packed-room-at-google-shibuya.jpg
+├── 02-gemma-workshop.jpg
+└── 03-pizza-queue.jpg
+```
+
+The caption under the frame is derived from the filename — the leading `NN-`
+and the extension are stripped and dashes become spaces, so the first file above
+reads as `PACKED ROOM AT GOOGLE SHIBUYA`. **To change a caption, rename the
+file.**
+
+Images are shown as a square, so square or centre-weighted photos work best.
+
+> **While `hero/` contains no images**, the rotator falls back to event posters
+> so the hero is never empty. Adding a single image replaces that fallback
+> entirely — it is all or nothing, not a merge.
+
+---
+
 ## Editing site-wide copy
 
 `src/content/site.yaml` holds everything outside event pages:
@@ -155,7 +183,7 @@ in `worker/index.ts` so the API stores it rather than discarding it.
 `scripts/content-plugin.js` is a Vite plugin that reads `src/content/` and
 exposes it as a `virtual:content` module. Images are turned into real `import`
 statements, so Vite hashes and fingerprints them like any other asset — which is
-why dropping a file into `photos/` is all that's required.
+why dropping a file into `photos/` or `hero/` is all that's required.
 
 At build time `scripts/prerender.js` renders every route to static HTML, so each
 event page is a real, crawlable page rather than something assembled in the

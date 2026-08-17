@@ -24,10 +24,14 @@ Worker.
 Vue 3 site, prerendered to static HTML, deployed as a Cloudflare Worker.
 
 **Content is data, not code.** Everything editable lives in `src/content/`:
-`site.yaml` for site-wide copy and chapter cards, and one folder per event under
-`events/` containing `index.md`, `poster.*` and an optional `photos/` folder.
-Never hardcode event data into a component — add or edit content files instead.
-See `docs/content-authoring.md`.
+`site.yaml` for site-wide copy and chapter cards, `hero/` for the hero rotator
+images, and one folder per event under `events/` containing `index.md`,
+`poster.*` and an optional `photos/` folder. Never hardcode event data into a
+component — add or edit content files instead. See `docs/content-authoring.md`.
+
+Hero rotator images come from `src/content/hero/`, with captions derived from
+filenames. When that folder is empty the rotator falls back to event posters
+(`heroImages` in `src/lib/content.ts`).
 
 **The content pipeline** is `scripts/content-plugin.js`, a Vite plugin exposing
 `src/content/` as a `virtual:content` module. It parses frontmatter with
@@ -53,6 +57,20 @@ served `404.html` by Cloudflare. `EventPage.vue` therefore renders
 **The Worker** (`worker/index.ts`) handles only `/api/*`; `run_worker_first` in
 `wrangler.jsonc` routes everything else straight to static assets. Newsletter
 signups go to Cloudflare D1 (`migrations/`). See `docs/cloudflare-setup.md`.
+
+## Secrets
+
+**This repo is public.** Secrets go in `.env` (gitignored; `.env.example` is the
+committed template) and, for production, `wrangler secret put`. Never add a
+secret to `wrangler.jsonc`, and never give one a `VITE_` prefix — Vite inlines
+`VITE_*` into the browser bundle.
+
+`database_id` in `wrangler.jsonc` is committed deliberately: it is a resource
+identifier rather than a credential, and Wrangler performs no variable
+substitution in its config file, so it cannot be read from `.env`.
+
+Worker error paths must not return raw errors — D1 messages carry SQL and file
+paths. Catch and return a generic message, as the existing handlers do.
 
 ## Design system
 

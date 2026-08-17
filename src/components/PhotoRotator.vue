@@ -4,9 +4,9 @@
  * fades. Dots jump straight to an image.
  */
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import type { EventEntry } from '@/lib/content'
+import type { HeroImage } from '@/lib/content'
 
-const props = defineProps<{ items: EventEntry[] }>()
+const props = defineProps<{ items: HeroImage[] }>()
 
 const index = ref(0)
 let timer: ReturnType<typeof setInterval> | undefined
@@ -43,20 +43,20 @@ onBeforeUnmount(stop)
 <template>
   <div v-if="current" class="rotator">
     <div class="rotator__frame">
-      <img :src="current.poster || ''" :alt="current.title" />
+      <img :src="current.src" :alt="current.caption" />
     </div>
     <div class="rotator__caption caps">
-      <span>{{ current.title }}</span>
+      <span>{{ current.caption }}</span>
       <span class="rotator__counter">{{ counter }}</span>
     </div>
     <div class="rotator__dots">
       <button
         v-for="(item, n) in items"
-        :key="item.slug"
+        :key="item.src"
         type="button"
         class="rotator__dot"
         :class="{ 'is-active': n === index }"
-        :aria-label="`Show ${item.title}`"
+        :aria-label="`Show ${item.caption}`"
         :aria-current="n === index"
         @click="jump(n)"
       />

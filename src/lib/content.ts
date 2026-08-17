@@ -1,8 +1,8 @@
-import { events, site } from 'virtual:content'
-import type { Chapter, EventEntry, Site } from 'virtual:content'
+import { events, hero, site } from 'virtual:content'
+import type { Chapter, EventEntry, HeroImage, Site } from 'virtual:content'
 
 export { events, site }
-export type { Chapter, EventEntry, Site }
+export type { Chapter, EventEntry, HeroImage, Site }
 
 /** Flavour names that resolve to a design-system custom property. */
 const FLAVOR_TOKENS = new Set([
@@ -41,6 +41,18 @@ export function findEvent(slug: string): EventEntry | undefined {
  */
 export const latestRecap: EventEntry | undefined =
   events.find((event) => event.featured) ?? events.find((event) => event.hasRecap)
+
+/**
+ * Images for the hero rotator.
+ *
+ * Anything in `src/content/hero/` wins. Until photos are added there, event
+ * posters stand in so the hero is never empty.
+ */
+export const heroImages: HeroImage[] = hero.length
+  ? hero
+  : events
+      .filter((event) => event.poster)
+      .map((event) => ({ src: event.poster as string, caption: event.title }))
 
 export function chapterById(id: string | null) {
   if (!id) return undefined

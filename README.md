@@ -12,6 +12,7 @@ edits HTML to publish an event.
 
 ```bash
 pnpm install
+cp .env.example .env  # local secrets; gitignored, safe to leave blank at first
 pnpm run dev          # http://localhost:5173
 ```
 
@@ -28,8 +29,9 @@ pnpm run preview            # http://localhost:8787
 
 | …do this | Read this |
 | --- | --- |
-| Add an event, photos, or change site copy | [`docs/content-authoring.md`](docs/content-authoring.md) |
+| Add an event, hero photos, or change site copy | [`docs/content-authoring.md`](docs/content-authoring.md) |
 | Set up Cloudflare and the newsletter database | [`docs/cloudflare-setup.md`](docs/cloudflare-setup.md) |
+| Know where secrets go (this repo is public) | [`docs/cloudflare-setup.md#secrets-and-configuration`](docs/cloudflare-setup.md#secrets-and-configuration) |
 | Understand whether we need R2 (we don't, yet) | [`docs/r2-storage.md`](docs/r2-storage.md) |
 | See the original design | [`docs/design-spec/`](docs/design-spec/) and [`docs/design-system/`](docs/design-system/) |
 
@@ -64,6 +66,7 @@ directly from its tokens in `src/styles/tokens/`.
 src/
 ├── content/              ← everything editable lives here
 │   ├── site.yaml             site copy, chapter cards, newsletter text
+│   ├── hero/                 images for the hero rotator
 │   ├── chapters/             chapter logos
 │   └── events/               one folder per event
 ├── components/
@@ -151,6 +154,22 @@ Worker CPU time.
 
 The form swaps to a confirmation in place, with no page reload, and remembers
 the subscribed state in `localStorage`.
+
+---
+
+## Secrets
+
+**This repo is public.** Secrets go in `.env`, which is gitignored — copy
+`.env.example` to start. In production they're set with
+`wrangler secret put`, never committed.
+
+The `database_id` in `wrangler.jsonc` is *not* a secret: it's a resource
+identifier that does nothing without an authenticated API token, and Wrangler
+has no way to read it from `.env` anyway. Full reasoning in
+[`docs/cloudflare-setup.md`](docs/cloudflare-setup.md#secrets-and-configuration).
+
+Never prefix anything secret with `VITE_` — Vite inlines those into the browser
+bundle.
 
 ---
 
