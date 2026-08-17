@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import SectionTitle from '@/components/SectionTitle.vue'
 import PhotoRotator from '@/components/PhotoRotator.vue'
@@ -10,7 +9,7 @@ import DsCard from '@/components/ds/DsCard.vue'
 import DsTag from '@/components/ds/DsTag.vue'
 import DsButton from '@/components/ds/DsButton.vue'
 import SiteWordmark from '@/components/SiteWordmark.vue'
-import { allEvents, flavorColor, heroImages, latestRecap, site } from '@/lib/content'
+import { allEvents, flavorColor, heroImages, site, upcomingEvents } from '@/lib/content'
 import { useHead } from '@/lib/head'
 
 useHead(() => ({
@@ -18,8 +17,6 @@ useHead(() => ({
   description: site.description,
   path: '/',
 }))
-
-const recapFlavor = computed(() => flavorColor(latestRecap?.flavor))
 </script>
 
 <template>
@@ -46,21 +43,30 @@ const recapFlavor = computed(() => flavorColor(latestRecap?.flavor))
 
     <NewsletterBand />
 
-    <section v-if="latestRecap" class="section container">
-      <SectionTitle>Latest recap</SectionTitle>
-      <div class="recap">
-        <RouterLink :to="latestRecap.path" class="recap__poster" :aria-label="latestRecap.title">
-          <DsCard :image="latestRecap.poster || undefined" :image-alt="latestRecap.title" />
-        </RouterLink>
-        <div class="recap__body">
-          <div class="chip" :style="{ background: recapFlavor }">{{ latestRecap.eyebrow }}</div>
-          <h3 class="recap__title">{{ latestRecap.title }}</h3>
-          <div class="recap__meta">{{ latestRecap.meta }}</div>
-          <p class="recap__summary">{{ latestRecap.summary }}</p>
-          <div class="recap__tags">
-            <DsTag v-for="tag in latestRecap.tags" :key="tag" :flavor="recapFlavor">{{ tag }}</DsTag>
+    <section v-if="upcomingEvents.length" id="upcoming" class="section container">
+      <SectionTitle>Coming up</SectionTitle>
+      <div class="upcoming">
+        <div v-for="event in upcomingEvents" :key="event.slug" class="upcoming__item">
+          <RouterLink :to="event.path" class="upcoming__poster" :aria-label="event.title">
+            <DsCard :image="event.poster || undefined" :image-alt="event.title" />
+          </RouterLink>
+          <div class="upcoming__body">
+            <div class="chip" :style="{ background: flavorColor(event.flavor) }">
+              {{ event.eyebrow }}
+            </div>
+            <h3 class="upcoming__title">{{ event.title }}</h3>
+            <div class="upcoming__meta">{{ event.meta }}</div>
+            <p class="upcoming__summary">{{ event.summary }}</p>
+            <div v-if="event.tags.length" class="upcoming__tags">
+              <DsTag v-for="tag in event.tags" :key="tag" :flavor="flavorColor(event.flavor)">
+                {{ tag }}
+              </DsTag>
+            </div>
+            <div class="upcoming__cta">
+              <DsButton v-if="event.luma" :href="event.luma" external>Sign up on Luma →</DsButton>
+              <DsButton variant="secondary" :to="event.path">Event details →</DsButton>
+            </div>
           </div>
-          <DsButton :to="latestRecap.path">Read the recap →</DsButton>
         </div>
       </div>
     </section>
@@ -117,35 +123,40 @@ const recapFlavor = computed(() => flavorColor(latestRecap?.flavor))
   gap: var(--space-5);
 }
 
-.recap {
+.upcoming {
+  display: grid;
+  gap: var(--space-7);
+}
+
+.upcoming__item {
   display: grid;
   grid-template-columns: 340px 1fr;
   gap: var(--space-6);
   align-items: start;
 }
 
-.recap__poster {
+.upcoming__poster {
   display: block;
   background: none;
   text-decoration: none;
 }
 
-.recap__poster:hover {
+.upcoming__poster:hover {
   background: none;
 }
 
-.recap__body {
+.upcoming__body {
   padding-top: var(--space-2);
 }
 
-.recap__title {
+.upcoming__title {
   font-family: var(--font-heading);
   font-size: var(--text-3xl);
   margin: var(--space-3) 0;
   text-transform: uppercase;
 }
 
-.recap__meta {
+.upcoming__meta {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   font-weight: 700;
@@ -153,17 +164,24 @@ const recapFlavor = computed(() => flavorColor(latestRecap?.flavor))
   margin-bottom: var(--space-3);
 }
 
-.recap__summary {
+.upcoming__summary {
   max-width: 520px;
   font-size: var(--text-sm);
   color: var(--text-muted);
 }
 
-.recap__tags {
+.upcoming__tags {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
   margin: var(--space-4) 0;
+}
+
+.upcoming__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
 }
 
 .events-section {
@@ -194,14 +212,14 @@ const recapFlavor = computed(() => flavorColor(latestRecap?.flavor))
   .chapters {
     grid-template-columns: 1fr;
   }
-  .recap {
+  .upcoming__item {
     grid-template-columns: 1fr;
     gap: var(--space-5);
   }
-  .recap__poster {
+  .upcoming__poster {
     max-width: 340px;
   }
-  .recap__title {
+  .upcoming__title {
     font-size: var(--text-2xl);
   }
 }

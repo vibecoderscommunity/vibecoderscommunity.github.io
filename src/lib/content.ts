@@ -1,4 +1,4 @@
-import { events, hero, site } from 'virtual:content'
+import { events, hero, site, upcoming } from 'virtual:content'
 import type { Chapter, EventEntry, HeroImage, Site } from 'virtual:content'
 
 export { events, site }
@@ -35,12 +35,20 @@ export function findEvent(slug: string): EventEntry | undefined {
   return events.find((event) => event.slug === slug)
 }
 
+/** Every upcoming event that has a page, past ones included, soonest first. */
+export const allUpcoming: EventEntry[] = upcoming
+
+export function findUpcoming(slug: string): EventEntry | undefined {
+  return upcoming.find((entry) => entry.slug === slug)
+}
+
 /**
- * The event shown in the "Latest recap" band: an explicitly `featured: true`
- * event if one exists, otherwise the most recent event that has recap copy.
+ * The events shown in the "Coming up" band — only those still in the future.
+ *
+ * `past` is stamped when the site is built, so an event drops out of the band
+ * on the first deploy after it happens. Its page stays up either way.
  */
-export const latestRecap: EventEntry | undefined =
-  events.find((event) => event.featured) ?? events.find((event) => event.hasRecap)
+export const upcomingEvents: EventEntry[] = upcoming.filter((entry) => !entry.past)
 
 /**
  * Images for the hero rotator.

@@ -21,11 +21,13 @@ declare module 'virtual:content' {
     tags: string[]
     blurb: string
     summary: string
-    featured: boolean
+    /** lu.ma event page. Always set on `upcoming`; optional on `events`. */
+    luma: string | null
     poster: string | null
     photos: string[]
-    hasRecap: boolean
     html: string
+    /** Whether the date has passed, evaluated at build time. */
+    past: boolean
     path: string
   }
 
@@ -63,5 +65,7 @@ declare module 'virtual:content' {
 
   export const site: Site
   export const events: EventEntry[]
+  /** Events from `src/content/upcoming/`, soonest first. */
+  export const upcoming: EventEntry[]
   export const hero: HeroImage[]
 }

@@ -3,6 +3,8 @@ import { RouterLink } from 'vue-router'
 import SiteWordmark from './SiteWordmark.vue'
 
 const links = [
+  // Points at `#chapters`, not `#upcoming`, because that section is always
+  // rendered — the "Coming up" band disappears once nothing is scheduled.
   { label: 'Next meetups', to: '/#chapters' },
   { label: 'Past events', to: '/#events' },
   { label: 'Sign up', to: '/#newsletter' },

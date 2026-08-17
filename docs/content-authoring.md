@@ -13,7 +13,11 @@ src/content/
 ├── chapters/
 │   ├── tokyo.avif                     chapter logos
 │   └── singapore.png
-└── events/
+├── upcoming/                          events that haven't happened yet
+│   └── 2026-08-19-models-models-models/
+│       ├── index.md                   frontmatter + what to expect
+│       └── poster.avif                card image
+└── events/                            events that have, with recaps
     └── 2026-07-08-local-models-with-gemma-4/
         ├── index.md                   frontmatter + recap copy
         ├── poster.avif                card image
@@ -22,9 +26,73 @@ src/content/
             └── 02.jpg
 ```
 
+`upcoming/` and `events/` take the same files and the same frontmatter. The
+difference is where they show up:
+
+| | Landing page | URL |
+| --- | --- | --- |
+| `upcoming/` | the **Coming up** band, while the date is in the future | `/upcoming/<slug>/` |
+| `events/` | the **Past events** grid | `/events/<slug>/` |
+
 ---
 
-## Adding an event
+## Announcing an upcoming event
+
+### 1. Create the folder
+
+Name it `YYYY-MM-DD-some-slug` under `upcoming/`. The date orders the band and
+decides when it stops showing; the rest becomes the URL:
+
+```
+src/content/upcoming/2026-09-16-agents-night/   →   /upcoming/agents-night/
+```
+
+### 2. Add `index.md`
+
+```markdown
+---
+title: Agents Night
+date: 2026-09-16
+meta: WED, SEP 16 · 7-9PM · SHIBUYA
+chapter: tokyo
+flavor: purple
+luma: https://luma.com/abc123
+tags:
+  - Agents
+  - Shareouts
+blurb: An evening of agent demos, failures included.
+summary: Bring an agent that half works. We'll debug it together.
+---
+
+Every month someone asks which framework to use, so this time we're doing demos.
+
+## What to expect
+
+- **Shareouts** — short, informal demos from whoever wants the floor.
+```
+
+`luma` is the signup button on both the band and the event page. Leave it out
+and it falls back to the chapter's lu.ma calendar from `site.yaml` — so the
+button is never missing, but pointing it at the specific event page is better.
+
+The body is optional. Without one the page shows the poster, tags and the
+`summary` line.
+
+### 3. After the event
+
+Nothing breaks. Once the date passes, the event drops out of the **Coming up**
+band on the next deploy, but `/upcoming/<slug>/` stays live — links shared before
+the meetup keep working, and the page says the event has already happened.
+
+To publish a recap, add a folder under `events/` as below. The two are
+independent; you can leave the `upcoming/` folder where it is.
+
+> The date check runs **at build time**, not in the browser. A finished event
+> disappears from the band on the next deploy, not at midnight.
+
+---
+
+## Adding a past event
 
 ### 1. Create the folder
 
@@ -44,6 +112,7 @@ date: 2026-09-16
 meta: WED, SEP 16 · 7-9PM · SHIBUYA
 chapter: tokyo
 flavor: purple
+luma: https://luma.com/abc123
 tags:
   - Agents
   - Shareouts
@@ -56,6 +125,12 @@ We packed the room for agents night. Thanks to everyone who demoed!
 
 - 🤖 Most agent demos fail live. That's the fun part.
 ```
+
+`luma` is optional here. When set, the event page gets a **See it on Luma →**
+button so people can pull up the original listing — attendee list, venue, the
+description as it was posted. Leave it out and no button renders; unlike
+`upcoming/`, it does not fall back to the chapter calendar, because a calendar
+of future meetups says nothing about an event that already happened.
 
 ### 3. Add a poster
 
@@ -90,12 +165,12 @@ file. Commit and push when it looks right.
 | `date` | ✅ | `YYYY-MM-DD`. Sorts the site, newest first. Falls back to the date in the folder name. |
 | `meta` | | The mono line under the title, e.g. `WED, SEP 16 · 7-9PM · SHIBUYA`. Free text. |
 | `blurb` | | One line shown on the event card. |
-| `summary` | | Longer line for the "Latest recap" teaser. Defaults to `blurb`. |
+| `summary` | | Longer line for the "Coming up" teaser. Defaults to `blurb`. |
 | `tags` | | List of short labels rendered as flavour-coloured tags. |
 | `flavor` | | Accent colour. See the list below. Defaults to `gold`. |
 | `chapter` | | `tokyo` or `singapore`. |
-| `eyebrow` | | Chip text in the Latest Recap band, e.g. `Workshop, complete`. Defaults to `Recap`. |
-| `featured` | | `true` pins this event to the "Latest recap" band. |
+| `luma` | | lu.ma event page. In `upcoming/` it's the signup button and defaults to the chapter calendar; in `events/` it's an optional "See it on Luma" link with no default. |
+| `eyebrow` | | Chip text, e.g. `Workshop, complete`. Defaults to `Upcoming` in `upcoming/`, `Recap` in `events/`. |
 | `slug` | | Override the URL slug. Defaults to the folder name minus the date. |
 | `poster` | | Override the poster path, e.g. `./art/cover.png`. |
 | `photos` | | Explicit ordered photo list. Overrides the `photos/` folder. |

@@ -6,10 +6,13 @@
  *
  *   src/content/site.yaml                     site-wide copy + chapter cards
  *   src/content/hero/*.(avif|webp|png|jpg)    hero rotator images, sorted by name
- *   src/content/events/<YYYY-MM-DD-slug>/
+ *   src/content/events/<YYYY-MM-DD-slug>/     past events → /events/<slug>/
  *       index.md                              frontmatter + recap markdown
  *       poster.(avif|webp|png|jpg)            card image
  *       photos/*.(avif|webp|png|jpg)          recap photo grid, sorted by name
+ *   src/content/upcoming/<YYYY-MM-DD-slug>/   future events → /upcoming/<slug>/
+ *       index.md                              frontmatter (incl. `luma`) + description
+ *       poster.(avif|webp|png|jpg)            card image
  *
  * Images are emitted as real `import` statements so Vite hashes, optimises and
  * fingerprints them like any other asset — dropping a file into `photos/` is
@@ -122,7 +125,19 @@ function isoDay(value) {
   return String(value ?? '')
 }
 
-function loadEvent(dir, assets) {
+/** Today as `YYYY-MM-DD` (UTC). Baked into the module so SSR and the hydrated
+ *  client always agree — a runtime `new Date()` would risk a mismatch. */
+function todayIso() {
+  return new Date().toISOString().slice(0, 10)
+}
+
+/**
+ * Loads one `<YYYY-MM-DD-slug>/index.md` folder.
+ *
+ * Shared by `events/` and `upcoming/`; the two differ only in the URL they are
+ * served at and the default eyebrow chip.
+ */
+function loadEntry(dir, assets, { pathPrefix, defaultEyebrow }) {
   const folder = path.basename(dir)
   const source = fs.readFileSync(path.join(dir, 'index.md'), 'utf8')
   const { data, content } = matter(source)
@@ -158,17 +173,22 @@ function loadEvent(dir, assets) {
       meta: data.meta || '',
       chapter: data.chapter || null,
       flavor: data.flavor || 'gold',
-      eyebrow: data.eyebrow || 'Recap',
+      eyebrow: data.eyebrow || defaultEyebrow,
       tags: data.tags || [],
       blurb: data.blurb || '',
-      // `summary` is the longer line used by the Latest Recap teaser.
+      // `summary` is the longer line used by the landing-page teaser bands.
       summary: data.summary || data.blurb || '',
-      featured: data.featured === true,
+      // lu.ma event page. On `upcoming/` it is the signup button and falls
+      // back to the chapter calendar in `buildContent`; on `events/` it is an
+      // optional "see it on Luma" link with no fallback, because a calendar of
+      // future meetups tells you nothing about an event that already happened.
+      luma: data.luma || null,
       poster,
       photos,
-      hasRecap: body.length > 0,
       html: body ? md.render(body) : '',
-      path: `/events/${slug}/`,
+      // Build-time, not runtime — see `todayIso`.
+      past: date < todayIso(),
+      path: `${pathPrefix}${slug}/`,
     },
     assets,
     dir,
@@ -206,36 +226,68 @@ function loadSite(contentDir, assets) {
   return resolveImages(site, assets, contentDir)
 }
 
-export function buildContent(root) {
-  const contentDir = path.join(root, 'src', 'content')
-  const eventsDir = path.join(contentDir, 'events')
-  const assets = new AssetRegistry(root)
-
-  const events = readDir(eventsDir)
+/** Loads every `<YYYY-MM-DD-slug>/index.md` under `dir`, unsorted. */
+function loadCollection(dir, assets, options) {
+  return readDir(dir)
     .filter((e) => e.isDirectory())
-    .map((e) => path.join(eventsDir, e.name))
-    .filter((dir) => fs.existsSync(path.join(dir, 'index.md')))
-    .map((dir) => loadEvent(dir, assets))
-    // Newest first — the order the landing page grid uses.
-    .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
+    .map((e) => path.join(dir, e.name))
+    .filter((entryDir) => fs.existsSync(path.join(entryDir, 'index.md')))
+    .map((entryDir) => loadEntry(entryDir, assets, options))
+}
 
-  const duplicates = events
+function assertUniqueSlugs(entries, label) {
+  const duplicates = entries
     .map((e) => e.slug)
     .filter((slug, i, all) => all.indexOf(slug) !== i)
   if (duplicates.length) {
-    throw new Error(`Duplicate event slugs: ${[...new Set(duplicates)].join(', ')}`)
+    throw new Error(`Duplicate ${label} slugs: ${[...new Set(duplicates)].join(', ')}`)
   }
+}
+
+export function buildContent(root) {
+  const contentDir = path.join(root, 'src', 'content')
+  const assets = new AssetRegistry(root)
+
+  const events = loadCollection(path.join(contentDir, 'events'), assets, {
+    pathPrefix: '/events/',
+    defaultEyebrow: 'Recap',
+  })
+    // Newest first — the order the landing page grid uses.
+    .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
+
+  const upcoming = loadCollection(path.join(contentDir, 'upcoming'), assets, {
+    pathPrefix: '/upcoming/',
+    defaultEyebrow: 'Upcoming',
+  })
+    // Soonest first — the opposite of `events`, so the next meetup leads.
+    .sort((a, b) => (a.date > b.date ? 1 : a.date < b.date ? -1 : 0))
+
+  assertUniqueSlugs(events, 'event')
+  assertUniqueSlugs(upcoming, 'upcoming event')
 
   const site = loadSite(contentDir, assets)
   const hero = loadHero(contentDir, assets)
 
-  return { assets, events, site, hero }
+  // An upcoming event without its own `luma:` falls back to the chapter's
+  // lu.ma calendar, so the signup button is never missing.
+  for (const entry of upcoming) {
+    if (!entry.luma) {
+      entry.luma = site.chapters?.find((c) => c.id === entry.chapter)?.luma ?? null
+    }
+  }
+
+  return { assets, events, upcoming, site, hero }
 }
 
-/** Routes to statically prerender. Used by the build script. */
+/**
+ * Routes to statically prerender. Used by the build script.
+ *
+ * Past-dated upcoming entries keep their page — the landing page stops listing
+ * them, but the URL that was shared before the event stays alive.
+ */
 export function contentRoutes(root) {
-  const { events } = buildContent(root)
-  return ['/', ...events.map((e) => e.path)]
+  const { events, upcoming } = buildContent(root)
+  return ['/', ...upcoming.map((e) => e.path), ...events.map((e) => e.path)]
 }
 
 export default function contentPlugin() {
@@ -254,11 +306,12 @@ export default function contentPlugin() {
 
     load(id) {
       if (id !== RESOLVED_ID) return
-      const { assets, events, site, hero } = buildContent(root)
+      const { assets, events, upcoming, site, hero } = buildContent(root)
       return [
         assets.imports(),
         `export const site = ${serialize(site)}`,
         `export const events = ${serialize(events)}`,
+        `export const upcoming = ${serialize(upcoming)}`,
         `export const hero = ${serialize(hero)}`,
       ]
         .filter(Boolean)
