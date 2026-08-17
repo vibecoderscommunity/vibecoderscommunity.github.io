@@ -41,7 +41,7 @@ pnpm exec wrangler whoami
 D1 is Cloudflare's serverless SQLite. It stores the newsletter list.
 
 ```bash
-pnpm exec wrangler d1 create vibecoders-db
+pnpm exec wrangler d1 create vibecoders-site
 ```
 
 The output ends with a block like this:
@@ -51,7 +51,7 @@ The output ends with a block like this:
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "vibecoders-db",
+      "database_name": "vibecoders-site",
       "database_id": "a1b2c3d4-0000-1111-2222-333344445555"
     }
   ]
@@ -65,7 +65,7 @@ The output ends with a block like this:
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "vibecoders-db",
+      "database_name": "vibecoders-site",
       "database_id": "a1b2c3d4-0000-1111-2222-333344445555",
       "migrations_dir": "migrations"
     }
@@ -94,7 +94,7 @@ pnpm run db:migrate:local
 Check it worked:
 
 ```bash
-pnpm exec wrangler d1 execute vibecoders-db --remote \
+pnpm exec wrangler d1 execute vibecoders-site --remote \
   --command "SELECT name FROM sqlite_master WHERE type='table'"
 ```
 
@@ -120,7 +120,7 @@ confirmation.
 Create a new numbered file in `migrations/` and apply it:
 
 ```bash
-pnpm exec wrangler d1 migrations create vibecoders-db add_something
+pnpm exec wrangler d1 migrations create vibecoders-site add_something
 # edit the generated file, then:
 pnpm run db:migrate:local   # try it locally first
 pnpm run db:migrate         # then apply for real
@@ -241,7 +241,7 @@ pnpm run db:subscribers
 Or export to CSV for a mail provider:
 
 ```bash
-pnpm exec wrangler d1 execute vibecoders-db --remote --json \
+pnpm exec wrangler d1 execute vibecoders-site --remote --json \
   --command "SELECT email, city, created_at FROM subscribers WHERE unsubscribed_at IS NULL ORDER BY created_at DESC" \
   | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const r=JSON.parse(s)[0].results;console.log('email,city,created_at');r.forEach(x=>console.log([x.email,x.city||'',x.created_at].join(',')))})" \
   > subscribers.csv
@@ -268,7 +268,7 @@ Without `ADMIN_TOKEN` set, the endpoint always returns 401.
 ### Unsubscribing someone
 
 ```bash
-pnpm exec wrangler d1 execute vibecoders-db --remote \
+pnpm exec wrangler d1 execute vibecoders-site --remote \
   --command "UPDATE subscribers SET unsubscribed_at = datetime('now') WHERE email = 'someone@example.com'"
 ```
 
@@ -357,7 +357,7 @@ Everything here fits comfortably in Cloudflare's free tier:
 
 ## Troubleshooting
 
-**`Couldn't find a D1 DB with the name or binding 'vibecoders-db'`**
+**`Couldn't find a D1 DB with the name or binding 'vibecoders-site'`**
 The `database_id` in `wrangler.jsonc` is still the placeholder, or you're logged
 into a different Cloudflare account. Check `pnpm exec wrangler whoami`.
 

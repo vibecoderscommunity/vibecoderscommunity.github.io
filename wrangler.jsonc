@@ -20,12 +20,12 @@
   },
 
   // Newsletter signups. Create the database and paste its id here:
-  //   pnpm exec wrangler d1 create vibecoders-db
+  //   pnpm exec wrangler d1 create vibecoders-site
   // See docs/cloudflare-setup.md for the full walkthrough.
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "vibecoders-db",
+      "database_name": "vibecoders-site",
       "database_id": "1caf3b9d-9b87-4e04-91fa-0059d1d2bb72",
       "migrations_dir": "migrations"
     }

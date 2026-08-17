@@ -10,9 +10,9 @@
     "preview": "npm run build && wrangler dev",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.worker.json && tsc --noEmit -p tsconfig.node.json",
     "deploy": "npm run build && wrangler deploy",
-    "db:migrate:local": "wrangler d1 migrations apply vibecoders-db --local",
-    "db:migrate": "wrangler d1 migrations apply vibecoders-db --remote",
-    "db:subscribers": "wrangler d1 execute vibecoders-db --remote --command \"SELECT email, city, created_at FROM subscribers ORDER BY created_at DESC\""
+    "db:migrate:local": "wrangler d1 migrations apply vibecoders-site --local",
+    "db:migrate": "wrangler d1 migrations apply vibecoders-site --remote",
+    "db:subscribers": "wrangler d1 execute vibecoders-site --remote --command \"SELECT email, city, created_at FROM subscribers ORDER BY created_at DESC\""
   },
   "dependencies": {
     "vue": "^3.5.41",
