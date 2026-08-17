@@ -7,14 +7,15 @@
 title: Vibe Coders Meetup
 tagline: Tokyo · Singapore
 description: >-
-  A cozy meetup for people who build things with AI — novices and enthusiasts,
-  fun project shareouts, AI-tool discussions, workshops, free pizza. We're an
-  English-speaking meetup (all languages welcome though!).
+  A cozy non-profit community to share our AI projects every month.
+  We like to do fun group shareouts and the occasional workshop -
+  come excited and engaged!
 
 # Shown in the footer, and used as the <meta name="description"> fallback.
 about: >-
-  A cozy meetup for vibe-coding novices and enthusiasts. Fun project shareouts,
-  AI-tool discussions, workshops, and free pizza.
+  A cozy non-profit community to share our AI projects every month.
+  We like to do fun group shareouts and the occasional workshop -
+  come excited and engaged!
 
 # Absolute URL of the deployed site — used for canonical links and og:url.
 url: https://vibecoders.fyi
@@ -30,18 +31,18 @@ chapters:
   - id: tokyo
     name: Tokyo
     logo: ./chapters/tokyo.avif
-    luma: https://lu.ma/vibecoders-tokyo
+    luma: https://luma.com/vibecoderstokyo
     next:
-      label: WED, AUG 19
+      label: AUG 19, 2026
       flavor: gold
-    last: MODELS MODELS MODELS · JUL
+    last: JUL 8, 2026
 
   - id: singapore
     name: Singapore
     logo: ./chapters/singapore.png
-    luma: https://lu.ma/vibecoders-sg
+    luma: https://luma.com/VibeCodersSG
     next:
-      label: TBA — JOIN THE LIST
+      label: TBA
       flavor: lime
     last: FRI, JUL 31
 
