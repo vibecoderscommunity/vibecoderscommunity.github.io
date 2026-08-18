@@ -1,0 +1,337 @@
+/**
+ * Vite plugin: turns `src/content/` into a `virtual:content` module.
+ *
+ * Everything the site renders comes from here, so adding an event never means
+ * touching a `.vue` or `.html` file:
+ *
+ *   src/content/site.yaml                     site-wide copy + chapter cards
+ *   src/content/hero/*.(avif|webp|png|jpg)    hero rotator images, sorted by name
+ *   src/content/events/<YYYY-MM-DD-slug>/     past events → /events/<slug>/
+ *       index.md                              frontmatter + recap markdown
+ *       poster.(avif|webp|png|jpg)            card image
+ *       photos/*.(avif|webp|png|jpg)          recap photo grid, sorted by name
+ *   src/content/upcoming/<YYYY-MM-DD-slug>/   future events → /upcoming/<slug>/
+ *       index.md                              frontmatter (incl. `luma`) + description
+ *       poster.(avif|webp|png|jpg)            card image
+ *
+ * Images are emitted as real `import` statements so Vite hashes, optimises and
+ * fingerprints them like any other asset — dropping a file into `photos/` is
+ * all it takes for it to appear on the event page.
+ */
+import fs from 'node:fs'
+import path from 'node:path'
+import matter from 'gray-matter'
+import MarkdownIt from 'markdown-it'
+import YAML from 'yaml'
+
+const VIRTUAL_ID = 'virtual:content'
+const RESOLVED_ID = '\0' + VIRTUAL_ID
+
+const IMAGE_RE = /\.(avif|webp|png|jpe?g|gif|svg)$/i
+const SLUG_DATE_RE = /^\d{4}-\d{2}-\d{2}-/
+
+const md = new MarkdownIt({ html: true, linkify: true, breaks: false })
+
+// External links open in a new tab; internal ones behave normally.
+const defaultLinkOpen =
+  md.renderer.rules.link_open ||
+  ((tokens, i, options, _env, self) => self.renderToken(tokens, i, options))
+md.renderer.rules.link_open = (tokens, i, options, env, self) => {
+  const href = tokens[i].attrGet('href') || ''
+  if (/^https?:\/\//i.test(href)) {
+    tokens[i].attrSet('target', '_blank')
+    tokens[i].attrSet('rel', 'noopener noreferrer')
+  }
+  return defaultLinkOpen(tokens, i, options, env, self)
+}
+
+/** Read a directory, returning [] instead of throwing when it does not exist. */
+function readDir(dir) {
+  try {
+    return fs.readdirSync(dir, { withFileTypes: true })
+  } catch {
+    return []
+  }
+}
+
+/**
+ * Collects asset imports while building the data module.
+ *
+ * Absolute filesystem paths are converted to root-relative specifiers
+ * (`/src/content/...`), which Vite resolves against the project root in both
+ * dev and build.
+ */
+class AssetRegistry {
+  constructor(root) {
+    this.root = root
+    this.specifiers = new Map() // specifier -> variable name
+  }
+
+  /** @returns {string} a JS expression referencing the imported asset. */
+  ref(absPath) {
+    const specifier = '/' + path.relative(this.root, absPath).split(path.sep).join('/')
+    let name = this.specifiers.get(specifier)
+    if (!name) {
+      name = `__asset${this.specifiers.size}`
+      this.specifiers.set(specifier, name)
+    }
+    return name
+  }
+
+  imports() {
+    return [...this.specifiers]
+      .map(([specifier, name]) => `import ${name} from ${JSON.stringify(specifier)}`)
+      .join('\n')
+  }
+}
+
+/**
+ * Serialises a value to JS source, replacing `{__asset: "<var>"}` markers with
+ * bare identifiers so they reference the imported asset URLs.
+ */
+function serialize(value) {
+  return JSON.stringify(value, null, 2).replace(
+    /\{\s*"__asset": "(__asset\d+)"\s*\}/g,
+    '$1',
+  )
+}
+
+/** Resolves a content-relative image reference into an asset marker. */
+function assetMarker(assets, baseDir, ref) {
+  const abs = path.resolve(baseDir, ref)
+  if (!fs.existsSync(abs)) {
+    throw new Error(`Referenced image does not exist: ${ref} (looked in ${abs})`)
+  }
+  return { __asset: assets.ref(abs) }
+}
+
+/** Recursively swaps any image-looking string for an asset marker. */
+function resolveImages(value, assets, baseDir) {
+  if (typeof value === 'string') {
+    return IMAGE_RE.test(value) ? assetMarker(assets, baseDir, value) : value
+  }
+  if (Array.isArray(value)) return value.map((v) => resolveImages(v, assets, baseDir))
+  if (value && typeof value === 'object' && !(value instanceof Date)) {
+    return Object.fromEntries(
+      Object.entries(value).map(([k, v]) => [k, resolveImages(v, assets, baseDir)]),
+    )
+  }
+  return value
+}
+
+/** Formats a Date (or date string) as an ISO `YYYY-MM-DD` day. */
+function isoDay(value) {
+  if (value instanceof Date) return value.toISOString().slice(0, 10)
+  return String(value ?? '')
+}
+
+/** Today as `YYYY-MM-DD` (UTC). Baked into the module so SSR and the hydrated
+ *  client always agree — a runtime `new Date()` would risk a mismatch. */
+function todayIso() {
+  return new Date().toISOString().slice(0, 10)
+}
+
+/**
+ * Loads one `<YYYY-MM-DD-slug>/index.md` folder.
+ *
+ * Shared by `events/` and `upcoming/`; the two differ only in the URL they are
+ * served at and the default eyebrow chip.
+ */
+function loadEntry(dir, assets, { pathPrefix, defaultEyebrow }) {
+  const folder = path.basename(dir)
+  const source = fs.readFileSync(path.join(dir, 'index.md'), 'utf8')
+  const { data, content } = matter(source)
+
+  const slug = data.slug || folder.replace(SLUG_DATE_RE, '')
+  const date = isoDay(data.date) || folder.slice(0, 10)
+
+  // Poster: explicit frontmatter wins, otherwise the `poster.*` file beside it.
+  let poster = data.poster
+  if (!poster) {
+    const found = readDir(dir).find((e) => e.isFile() && /^poster\./i.test(e.name))
+    poster = found ? './' + found.name : null
+  }
+
+  // Photos: explicit frontmatter list, otherwise everything in `photos/`,
+  // sorted by filename so `01.jpg`, `02.jpg`… land in a predictable order.
+  let photos = data.photos
+  if (!photos) {
+    photos = readDir(path.join(dir, 'photos'))
+      .filter((e) => e.isFile() && IMAGE_RE.test(e.name))
+      .map((e) => e.name)
+      .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }))
+      .map((name) => `./photos/${name}`)
+  }
+
+  const body = content.trim()
+
+  return resolveImages(
+    {
+      slug,
+      date,
+      title: data.title || slug,
+      meta: data.meta || '',
+      chapter: data.chapter || null,
+      flavor: data.flavor || 'gold',
+      eyebrow: data.eyebrow || defaultEyebrow,
+      tags: data.tags || [],
+      blurb: data.blurb || '',
+      // `summary` is the longer line used by the landing-page teaser bands.
+      summary: data.summary || data.blurb || '',
+      // lu.ma event page. On `upcoming/` it is the signup button and falls
+      // back to the chapter calendar in `buildContent`; on `events/` it is an
+      // optional "see it on Luma" link with no fallback, because a calendar of
+      // future meetups tells you nothing about an event that already happened.
+      luma: data.luma || null,
+      poster,
+      photos,
+      html: body ? md.render(body) : '',
+      // Build-time, not runtime — see `todayIso`.
+      past: date < todayIso(),
+      path: `${pathPrefix}${slug}/`,
+    },
+    assets,
+    dir,
+  )
+}
+
+/**
+ * Hero rotator images from `src/content/hero/`, sorted by filename.
+ *
+ * The caption under the rotator comes from the filename: a leading `NN-` index
+ * and the extension are stripped, and separators become spaces, so
+ * `03-gemma-workshop.avif` reads as "GEMMA WORKSHOP". Renaming the file is how
+ * you change the caption — there is nothing else to edit.
+ */
+function loadHero(contentDir, assets) {
+  const dir = path.join(contentDir, 'hero')
+
+  return readDir(dir)
+    .filter((entry) => entry.isFile() && IMAGE_RE.test(entry.name))
+    .map((entry) => entry.name)
+    .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }))
+    .map((name) => ({
+      src: { __asset: assets.ref(path.join(dir, name)) },
+      caption: name
+        .replace(IMAGE_RE, '')
+        .replace(/^\d+[-_.\s]*/, '')
+        .replace(/[-_]+/g, ' ')
+        .trim(),
+    }))
+}
+
+function loadSite(contentDir, assets) {
+  const file = path.join(contentDir, 'site.yaml')
+  const site = YAML.parse(fs.readFileSync(file, 'utf8')) || {}
+  return resolveImages(site, assets, contentDir)
+}
+
+/** Loads every `<YYYY-MM-DD-slug>/index.md` under `dir`, unsorted. */
+function loadCollection(dir, assets, options) {
+  return readDir(dir)
+    .filter((e) => e.isDirectory())
+    .map((e) => path.join(dir, e.name))
+    .filter((entryDir) => fs.existsSync(path.join(entryDir, 'index.md')))
+    .map((entryDir) => loadEntry(entryDir, assets, options))
+}
+
+function assertUniqueSlugs(entries, label) {
+  const duplicates = entries
+    .map((e) => e.slug)
+    .filter((slug, i, all) => all.indexOf(slug) !== i)
+  if (duplicates.length) {
+    throw new Error(`Duplicate ${label} slugs: ${[...new Set(duplicates)].join(', ')}`)
+  }
+}
+
+export function buildContent(root) {
+  const contentDir = path.join(root, 'src', 'content')
+  const assets = new AssetRegistry(root)
+
+  const events = loadCollection(path.join(contentDir, 'events'), assets, {
+    pathPrefix: '/events/',
+    defaultEyebrow: 'Recap',
+  })
+    // Newest first — the order the landing page grid uses.
+    .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
+
+  const upcoming = loadCollection(path.join(contentDir, 'upcoming'), assets, {
+    pathPrefix: '/upcoming/',
+    defaultEyebrow: 'Upcoming',
+  })
+    // Soonest first — the opposite of `events`, so the next meetup leads.
+    .sort((a, b) => (a.date > b.date ? 1 : a.date < b.date ? -1 : 0))
+
+  assertUniqueSlugs(events, 'event')
+  assertUniqueSlugs(upcoming, 'upcoming event')
+
+  const site = loadSite(contentDir, assets)
+  const hero = loadHero(contentDir, assets)
+
+  // An upcoming event without its own `luma:` falls back to the chapter's
+  // lu.ma calendar, so the signup button is never missing.
+  for (const entry of upcoming) {
+    if (!entry.luma) {
+      entry.luma = site.chapters?.find((c) => c.id === entry.chapter)?.luma ?? null
+    }
+  }
+
+  return { assets, events, upcoming, site, hero }
+}
+
+/**
+ * Routes to statically prerender. Used by the build script.
+ *
+ * Past-dated upcoming entries keep their page — the landing page stops listing
+ * them, but the URL that was shared before the event stays alive.
+ */
+export function contentRoutes(root) {
+  const { events, upcoming } = buildContent(root)
+  return ['/', ...upcoming.map((e) => e.path), ...events.map((e) => e.path)]
+}
+
+export default function contentPlugin() {
+  let root = process.cwd()
+
+  return {
+    name: 'vibecoders:content',
+
+    configResolved(config) {
+      root = config.root
+    },
+
+    resolveId(id) {
+      if (id === VIRTUAL_ID) return RESOLVED_ID
+    },
+
+    load(id) {
+      if (id !== RESOLVED_ID) return
+      const { assets, events, upcoming, site, hero } = buildContent(root)
+      return [
+        assets.imports(),
+        `export const site = ${serialize(site)}`,
+        `export const events = ${serialize(events)}`,
+        `export const upcoming = ${serialize(upcoming)}`,
+        `export const hero = ${serialize(hero)}`,
+      ]
+        .filter(Boolean)
+        .join('\n\n')
+    },
+
+    configureServer(server) {
+      const contentDir = path.join(root, 'src', 'content')
+      server.watcher.add(contentDir)
+
+      const invalidate = (file) => {
+        if (!file.startsWith(contentDir)) return
+        const mod = server.moduleGraph.getModuleById(RESOLVED_ID)
+        if (mod) server.moduleGraph.invalidateModule(mod)
+        server.ws.send({ type: 'full-reload' })
+      }
+
+      server.watcher.on('add', invalidate)
+      server.watcher.on('unlink', invalidate)
+      server.watcher.on('change', invalidate)
+    },
+  }
+}

@@ -1,0 +1,48 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Local Models with Gemma 4 — Vibe Coders Meetup</title>
+<link rel="stylesheet" href="_ds/vibe-coders-design-system-6b22974d-8a14-4fd6-9fc9-559c31a92f55/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/vibe-coders-design-system-6b22974d-8a14-4fd6-9fc9-559c31a92f55/tokens/colors.css">
+<link rel="stylesheet" href="_ds/vibe-coders-design-system-6b22974d-8a14-4fd6-9fc9-559c31a92f55/tokens/typography.css">
+<link rel="stylesheet" href="_ds/vibe-coders-design-system-6b22974d-8a14-4fd6-9fc9-559c31a92f55/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/vibe-coders-design-system-6b22974d-8a14-4fd6-9fc9-559c31a92f55/tokens/effects.css">
+<link rel="stylesheet" href="_ds/vibe-coders-design-system-6b22974d-8a14-4fd6-9fc9-559c31a92f55/styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="_ds/vibe-coders-design-system-6b22974d-8a14-4fd6-9fc9-559c31a92f55/_ds_bundle.js"></script>
+<script src="data.js"></script>
+<script src="image-slot.js"></script>
+<style>body{margin:0}</style></head><body><div id="root"></div>
+<script type="text/babel" src="shared.jsx"></script>
+<script type="text/babel">
+// TEMPLATE: to make a new recap page, duplicate this file, change EVENT_ID, and swap the copy below.
+const {Button,Tag}=window.VibeCodersDesignSystem_6b2297;
+const EVENT_ID=8;
+function Recap(){
+  const ev=window.VBT_EVENTS.find(e=>e.id===EVENT_ID);
+  return <div>
+    <SiteHeader prefix="index.html"/>
+    <div style={{maxWidth:"var(--container-text)",margin:"0 auto",padding:"var(--space-7) var(--space-5)"}}>
+      <a href="index.html#events" style={{fontSize:"var(--text-sm)"}}>← All events</a>
+      <div style={{background:ev.flavor,border:"2px solid var(--ink)",padding:"2px 10px",fontFamily:"var(--font-mono)",fontSize:"var(--text-xs)",fontWeight:700,textTransform:"uppercase",letterSpacing:"var(--tracking-caps)",margin:"var(--space-5) 0 var(--space-3)",width:"fit-content"}}>Recap</div>
+      <h1 style={{fontFamily:"var(--font-heading)",fontSize:"var(--text-3xl)",margin:"0 0 var(--space-2)",textTransform:"uppercase"}}>{ev.title}</h1>
+      <div style={{fontFamily:"var(--font-mono)",fontSize:"var(--text-sm)",fontWeight:700,letterSpacing:"var(--tracking-wide)",color:"var(--text-muted)",marginBottom:"var(--space-5)"}}>{ev.meta}</div>
+      <img src={ev.img} alt={ev.title} style={{width:"100%",border:"2px solid var(--ink)",boxShadow:"var(--shadow-pixel)"}}/>
+      <div style={{display:"flex",gap:"var(--space-2)",margin:"var(--space-5) 0"}}>{ev.tags.map(t=><Tag key={t} flavor={ev.flavor}>{t}</Tag>)}</div>
+      <p>Gemma workshop, complete! 🎉 Thank you to everyone who braved the long lines to completely pack the room for our local models session! You can find the workshop materials <a href="https://github.com/bebechien/gemma/blob/main/workshop/20260708.VIBE%20CODERS%20TOKYO.md" target="_blank" rel="noopener">on GitHub</a>.</p>
+      <h2 style={{fontFamily:"var(--font-heading)",fontSize:"var(--text-xl)",textTransform:"uppercase",margin:"var(--space-6) 0 var(--space-3)"}}>Takeaways</h2>
+      <ul style={{fontSize:"var(--text-sm)",lineHeight:"var(--leading-body)",paddingLeft:"1.2em",margin:0}}>
+        <li>💡 You do not need a massive GPU to start vibe coding with Gemma! You can prototype rapidly right inside Google AI Studio for free.</li>
+      </ul>
+      <h2 style={{fontFamily:"var(--font-heading)",fontSize:"var(--text-xl)",textTransform:"uppercase",margin:"var(--space-6) 0 var(--space-3)"}}>Photos</h2>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"var(--space-3)"}}>
+        {[1,2,3,4,5,6].map(n=><div key={n} style={{aspectRatio:"1",border:"2px solid var(--ink)"}}><image-slot id={"gemma-photo-"+n} shape="rect" placeholder={"Drop photo "+n}></image-slot></div>)}
+      </div>
+
+      <Button variant="secondary" onClick={()=>{window.location.href="index.html#events"}}>← Back to all events</Button>
+    </div>
+    <NewsletterBand/>
+    <SiteFooter prefix="index.html"/>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<Recap/>);
+</script></body></html>

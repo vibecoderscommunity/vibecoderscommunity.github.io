@@ -1,0 +1,275 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "components/actions/**",
+              "components/display/**",
+              "components/forms/**",
+              "components/layout/**",
+              "ui_kits/website/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Silkscreen|Handjet|JetBrains Mono|DotGothic16))/i]",
+        "message": "Font not provided by the design system. Available: Silkscreen, Handjet, JetBrains Mono, DotGothic16."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|size|flavor|disabled|type|onClick|style|children|key|ref|className|style|children)$/]",
+        "message": "<Button> doesn't accept that prop. Declared props: variant, size, flavor, disabled, type, onClick, style, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='variant'] > Literal[value!=/^(?:primary|secondary|inverse|flavor)$/]",
+        "message": "<Button> variant must be one of 'primary' | 'secondary' | 'inverse' | 'flavor'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='size'] > Literal[value!=/^(?:sm|md|lg)$/]",
+        "message": "<Button> size must be one of 'sm' | 'md' | 'lg'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='type'] > Literal[value!=/^(?:button|submit)$/]",
+        "message": "<Button> type must be one of 'button' | 'submit'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='CardTag'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|flavor|key|ref|className|style|children)$/]",
+        "message": "<CardTag> doesn't accept that prop. Declared props: label, flavor."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='HeaderLink'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|href|key|ref|className|style|children)$/]",
+        "message": "<HeaderLink> doesn't accept that prop. Declared props: label, href."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Input'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|hint|error|prefix|type|placeholder|value|onChange|disabled|style|key|ref|className|style|children)$/]",
+        "message": "<Input> doesn't accept that prop. Declared props: label, hint, error, prefix, type, placeholder, value, onChange, disabled, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='MultiSelectOption'] > JSXAttribute > JSXIdentifier[name!=/^(?:value|label|key|ref|className|style|children)$/]",
+        "message": "<MultiSelectOption> doesn't accept that prop. Declared props: value, label."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='SelectOption'] > JSXAttribute > JSXIdentifier[name!=/^(?:value|label|key|ref|className|style|children)$/]",
+        "message": "<SelectOption> doesn't accept that prop. Declared props: value, label."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Tag'] > JSXAttribute > JSXIdentifier[name!=/^(?:flavor|onRemove|children|style|key|ref|className|style|children)$/]",
+        "message": "<Tag> doesn't accept that prop. Declared props: flavor, onRemove, children, style."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {
+      "Button": {
+        "replaces": []
+      },
+      "CardTag": {
+        "replaces": []
+      },
+      "HeaderLink": {
+        "replaces": []
+      },
+      "Input": {
+        "replaces": []
+      },
+      "MultiSelectOption": {
+        "replaces": []
+      },
+      "SelectOption": {
+        "replaces": []
+      },
+      "Tag": {
+        "replaces": []
+      }
+    },
+    "tokens": [
+      "--accent",
+      "--accent-hover",
+      "--blue",
+      "--border-soft",
+      "--border-strong",
+      "--border-w",
+      "--border-w-heavy",
+      "--container",
+      "--container-text",
+      "--dur-base",
+      "--dur-fast",
+      "--ease-snap",
+      "--ease-step",
+      "--error",
+      "--focus-ring",
+      "--font-heading",
+      "--font-mono",
+      "--font-pixel",
+      "--font-pixel-jp",
+      "--gold",
+      "--ink",
+      "--ink-faint",
+      "--ink-soft",
+      "--leading-body",
+      "--leading-snug",
+      "--leading-tight",
+      "--lime",
+      "--navy",
+      "--ok",
+      "--paper",
+      "--paper-2",
+      "--paper-3",
+      "--peach",
+      "--purple",
+      "--radius-0",
+      "--radius-px",
+      "--red",
+      "--red-dark",
+      "--red-tint",
+      "--shadow-pixel",
+      "--shadow-pixel-accent",
+      "--shadow-pixel-lg",
+      "--shadow-pixel-sm",
+      "--space-1",
+      "--space-2",
+      "--space-3",
+      "--space-4",
+      "--space-5",
+      "--space-6",
+      "--space-7",
+      "--space-8",
+      "--space-9",
+      "--surface-card",
+      "--surface-inverse",
+      "--surface-page",
+      "--surface-sunken",
+      "--text-2xl",
+      "--text-3xl",
+      "--text-4xl",
+      "--text-base",
+      "--text-body",
+      "--text-faint",
+      "--text-inverse",
+      "--text-lg",
+      "--text-muted",
+      "--text-sm",
+      "--text-xl",
+      "--text-xs",
+      "--tracking-caps",
+      "--tracking-wide",
+      "--warn",
+      "--white"
+    ],
+    "tokenKinds": {
+      "--ink": "color",
+      "--ink-soft": "color",
+      "--ink-faint": "color",
+      "--paper": "color",
+      "--paper-2": "color",
+      "--paper-3": "color",
+      "--white": "color",
+      "--red": "color",
+      "--red-dark": "color",
+      "--red-tint": "color",
+      "--navy": "color",
+      "--blue": "color",
+      "--lime": "color",
+      "--purple": "color",
+      "--gold": "color",
+      "--peach": "color",
+      "--surface-page": "color",
+      "--surface-card": "color",
+      "--surface-sunken": "color",
+      "--surface-inverse": "color",
+      "--text-body": "font",
+      "--text-muted": "font",
+      "--text-faint": "font",
+      "--text-inverse": "font",
+      "--accent": "color",
+      "--accent-hover": "color",
+      "--border-strong": "color",
+      "--border-soft": "color",
+      "--focus-ring": "color",
+      "--ok": "color",
+      "--warn": "color",
+      "--error": "color",
+      "--font-pixel": "font",
+      "--font-heading": "font",
+      "--font-mono": "font",
+      "--font-pixel-jp": "font",
+      "--text-xs": "font",
+      "--text-sm": "font",
+      "--text-base": "font",
+      "--text-lg": "font",
+      "--text-xl": "font",
+      "--text-2xl": "font",
+      "--text-3xl": "font",
+      "--text-4xl": "font",
+      "--leading-tight": "font",
+      "--leading-snug": "font",
+      "--leading-body": "font",
+      "--tracking-wide": "font",
+      "--tracking-caps": "font",
+      "--space-1": "spacing",
+      "--space-2": "spacing",
+      "--space-3": "spacing",
+      "--space-4": "spacing",
+      "--space-5": "spacing",
+      "--space-6": "spacing",
+      "--space-7": "spacing",
+      "--space-8": "spacing",
+      "--space-9": "spacing",
+      "--container": "spacing",
+      "--container-text": "font",
+      "--radius-0": "radius",
+      "--radius-px": "radius",
+      "--border-w": "spacing",
+      "--border-w-heavy": "spacing",
+      "--shadow-pixel": "shadow",
+      "--shadow-pixel-sm": "shadow",
+      "--shadow-pixel-lg": "shadow",
+      "--shadow-pixel-accent": "shadow",
+      "--ease-step": "other",
+      "--ease-snap": "other",
+      "--dur-fast": "other",
+      "--dur-base": "other"
+    },
+    "fontFamilies": [
+      "DotGothic16",
+      "Handjet",
+      "JetBrains Mono",
+      "Silkscreen"
+    ]
+  }
+}

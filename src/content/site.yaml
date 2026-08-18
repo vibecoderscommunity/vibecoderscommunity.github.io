@@ -1,0 +1,82 @@
+# ---------------------------------------------------------------------------
+# Site-wide content. Edit this file to change anything outside of event pages:
+# the tagline, the chapter cards, the newsletter copy and the footer.
+# No HTML or Vue changes required.
+# ---------------------------------------------------------------------------
+
+title: Vibe Coders Meetup
+tagline: Tokyo · Singapore
+description: >-
+  A cozy non-profit community to share our AI projects every month.
+  We like to do fun group shareouts and the occasional workshop -
+  come excited and engaged!
+
+# Shown in the footer, and used as the <meta name="description"> fallback.
+about: >-
+  A cozy non-profit community to share our AI projects every month.
+  We like to do fun group shareouts and the occasional workshop -
+  come excited and engaged!
+
+# Absolute URL of the deployed site — used for canonical links and og:url.
+url: https://vibecoders.fyi
+
+# ---------------------------------------------------------------------------
+# Chapters — rendered as the "Two cities, one vibe" cards.
+#   next.label   free text; shown in the flavour-coloured chip
+#   next.flavor  one of: gold lime purple peach red-tint light-navy light-blue
+#   last         free text; the muted "LAST → …" line
+#   logo         path relative to this file; any image format Vite can handle
+# ---------------------------------------------------------------------------
+chapters:
+  - id: tokyo
+    name: Tokyo
+    logo: ./chapters/tokyo.avif
+    luma: https://luma.com/vibecoderstokyo
+    linkedin: https://linkedin.com/company/vibe-coders-tokyo
+    next:
+      label: AUG 19, 2026
+      flavor: gold
+    last: JUL 8, 2026
+
+  - id: singapore
+    name: Singapore
+    logo: ./chapters/singapore.png
+    luma: https://luma.com/VibeCodersSG
+    next:
+      label: TBA
+      flavor: lime
+    last: FRI, JUL 31
+
+# ---------------------------------------------------------------------------
+# Newsletter band copy. `highlight` is the word rendered in lime.
+# ---------------------------------------------------------------------------
+newsletter:
+  heading: Sign up to be {highlight} of future events
+  highlight: notified
+  sub: >-
+    The next meetup in Tokyo and Singapore, straight to your inbox.
+    No spam, unsubscribe whenever.
+  success: You're in! See you at the next one
+  cities:
+    - value: tokyo
+      label: Tokyo
+    - value: singapore
+      label: Singapore
+    - value: else
+      label: Somewhere else
+
+# ---------------------------------------------------------------------------
+# Channels — the chat and social links shown under the newsletter form.
+#   label   platform name, rendered in the pixel font
+#   handle  the short line under it; what people would type or search for
+#   url     absolute link, opened in a new tab
+# ---------------------------------------------------------------------------
+channels:
+  heading: Or come hang out with us
+  links:
+    - label: Discord
+      handle: discord.gg/fyh4PdsjnU
+      url: https://discord.gg/fyh4PdsjnU
+    - label: LinkedIn
+      handle: vibe-coders-tokyo
+      url: https://www.linkedin.com/company/vibe-coders-tokyo/

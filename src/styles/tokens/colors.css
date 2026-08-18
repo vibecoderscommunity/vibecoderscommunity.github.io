@@ -1,0 +1,38 @@
+:root{
+/* base — warm ink & paper */
+--ink:#17130d;
+--ink-soft:#3d372c;
+--ink-faint:#7a7261;
+--paper:#f5efe1;
+--paper-2:#ece3cd;
+--paper-3:#e2d6b8;
+--white:#fffdf7;
+/* brand accent */
+--red:#e23d28;
+--red-dark:#b42a18;
+--red-tint:#f8d9d3;
+/* event flavors — secondary accents from event artwork */
+--navy:#131f63;
+--blue:#2b3fc7;
+--lime:#c7e64f;
+--purple:#a985e8;
+--gold:#e3c366;
+--peach:#f0b489;
+/* semantic aliases */
+--surface-page:var(--paper);
+--surface-card:var(--white);
+--surface-sunken:var(--paper-2);
+--surface-inverse:var(--ink);
+--text-body:var(--ink);
+--text-muted:var(--ink-soft);
+--text-faint:var(--ink-faint);
+--text-inverse:var(--paper);
+--accent:var(--red);
+--accent-hover:var(--red-dark);
+--border-strong:var(--ink);
+--border-soft:var(--paper-3);
+--focus-ring:var(--red);
+--ok:#3d7a3a;
+--warn:#b07818;
+--error:var(--red-dark);
+}

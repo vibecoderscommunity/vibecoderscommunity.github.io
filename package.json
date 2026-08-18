@@ -1,13 +1,33 @@
 {
-  "name": "vibecoderscommunity.github.io",
-  "version": "1.0.0",
-  "description": "Vibe Coders Community Website",
+  "name": "vibecoderscommunity",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Vibe Coders Meetup — Tokyo & Singapore",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "vite build && vite build --ssr && node scripts/prerender.js",
+    "preview": "npm run build && wrangler dev",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.worker.json && tsc --noEmit -p tsconfig.node.json",
+    "deploy": "npm run build && wrangler deploy",
+    "db:migrate:local": "wrangler d1 migrations apply vibecoders-site --local",
+    "db:migrate": "wrangler d1 migrations apply vibecoders-site --remote",
+    "db:subscribers": "wrangler d1 execute vibecoders-site --remote --command \"SELECT email, city, created_at FROM subscribers ORDER BY created_at DESC\""
+  },
+  "dependencies": {
+    "vue": "^3.5.41",
+    "vue-router": "^5.2.0"
   },
   "devDependencies": {
-    "vite": "^8.0.10"
+    "@cloudflare/workers-types": "^5.20260816.1",
+    "@types/node": "^26.2.0",
+    "@vitejs/plugin-vue": "^6.0.8",
+    "gray-matter": "^4.0.3",
+    "markdown-it": "^15.0.0",
+    "typescript": "^5.7.3",
+    "vite": "^8.2.1",
+    "vue-tsc": "^3.3.10",
+    "wrangler": "^4.0.0",
+    "yaml": "^2.7.0"
   }
 }
