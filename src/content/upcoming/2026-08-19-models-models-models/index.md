@@ -7,7 +7,7 @@ flavor: light-navy
 eyebrow: Next up
 luma: https://luma.com/nr97x3za
 tags:
-  - Local models
+  - Discussion
   - Shareouts
 blurb: A whole night of model talk — local, hosted, and everything between.
 summary: >-

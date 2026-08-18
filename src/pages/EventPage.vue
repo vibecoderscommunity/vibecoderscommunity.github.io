@@ -64,11 +64,7 @@ useHead(() =>
         </div>
       </template>
 
-      <div class="event__note">
-        <span class="event__note-label">Photos &amp; slides → </span>
-        shared in the <RouterLink to="#newsletter">newsletter</RouterLink>. Not on it yet? Scroll
-        down.
-      </div>
+
 
       <div class="event__cta">
         <DsButton v-if="event.luma" variant="flavor" :flavor="flavor" :href="event.luma" external>

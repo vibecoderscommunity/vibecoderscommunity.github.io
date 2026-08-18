@@ -1,8 +1,8 @@
 import { events, hero, site, upcoming } from 'virtual:content'
-import type { Chapter, EventEntry, HeroImage, Site } from 'virtual:content'
+import type { Chapter, Channel, EventEntry, HeroImage, Site } from 'virtual:content'
 
 export { events, site }
-export type { Chapter, EventEntry, HeroImage, Site }
+export type { Chapter, Channel, EventEntry, HeroImage, Site }
 
 /** Flavour names that resolve to a design-system custom property. */
 const FLAVOR_TOKENS = new Set([

@@ -37,10 +37,7 @@ function Recap(){
       <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"var(--space-3)"}}>
         {[1,2,3,4,5,6].map(n=><div key={n} style={{aspectRatio:"1",border:"2px solid var(--ink)"}}><image-slot id={"gemma-photo-"+n} shape="rect" placeholder={"Drop photo "+n}></image-slot></div>)}
       </div>
-      <div style={{background:"var(--surface-sunken)",border:"2px solid var(--ink)",padding:"var(--space-4)",margin:"var(--space-6) 0",fontSize:"var(--text-sm)"}}>
-        <span style={{fontFamily:"var(--font-pixel)",fontWeight:700,textTransform:"uppercase",fontSize:"var(--text-xs)"}}>Photos & slides → </span>
-        shared in the <a href="#newsletter">newsletter</a>. Not on it yet? Scroll down.
-      </div>
+
       <Button variant="secondary" onClick={()=>{window.location.href="index.html#events"}}>← Back to all events</Button>
     </div>
     <NewsletterBand/>

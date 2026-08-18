@@ -6,6 +6,7 @@ meta: WED, DEC 17 · 6-8PM · GOOGLE SHIBUYA
 chapter: tokyo
 flavor: red-tint
 tags:
-  - Showcase
+  - Shareouts
+  - Discussion
 blurb: An in-person vibe coding showcase and discussion on efficient workflows.
 ---

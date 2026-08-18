@@ -40,6 +40,13 @@ declare module 'virtual:content' {
     last: string
   }
 
+  /** One community link in the channels strip under the newsletter form. */
+  export interface Channel {
+    label: string
+    handle: string
+    url: string
+  }
+
   export interface Site {
     title: string
     tagline: string
@@ -53,6 +60,10 @@ declare module 'virtual:content' {
       sub: string
       success: string
       cities: { value: string; label: string }[]
+    }
+    channels: {
+      heading: string
+      links: Channel[]
     }
   }
 

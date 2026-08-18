@@ -16,10 +16,7 @@ function Recap({onBack}){
         <li>Voice-controlled kitchen timer (it mostly listened)</li>
         <li>Three different takes on agent memory — all cozy, all cursed</li>
       </ul>
-      <div style={{background:"var(--surface-sunken)",border:"2px solid var(--ink)",padding:"var(--space-4)",margin:"var(--space-6) 0",fontSize:"var(--text-sm)"}}>
-        <span style={{fontFamily:"var(--font-pixel)",fontWeight:700,textTransform:"uppercase",fontSize:"var(--text-xs)"}}>Photos & slides → </span>
-        shared in the newsletter. Not on it yet? Scroll down.
-      </div>
+
       <Button variant="secondary" onClick={onBack}>← Back to all events</Button>
     </div>
     <NewsletterBand/>

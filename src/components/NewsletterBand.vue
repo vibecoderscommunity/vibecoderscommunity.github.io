@@ -124,6 +124,25 @@ async function submit() {
         </DsButton>
       </form>
     </div>
+
+    <div class="newsletter__channels container">
+      <div class="channels">
+        <p class="channels__heading caps">{{ site.channels.heading }}</p>
+        <div class="channels__list">
+          <a
+            v-for="channel in site.channels.links"
+            :key="channel.url"
+            class="channel"
+            :href="channel.url"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="channel__label">{{ channel.label }}</span>
+            <span class="channel__handle">{{ channel.handle }}</span>
+          </a>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -135,7 +154,8 @@ async function submit() {
 }
 
 .newsletter__inner {
-  padding-block: var(--space-7);
+  padding-top: var(--space-7);
+  padding-bottom: var(--space-6);
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-7);
@@ -179,6 +199,73 @@ async function submit() {
   font-family: var(--font-pixel);
   font-weight: 700;
   text-transform: uppercase;
+}
+
+/* Channels strip — the border sits on an inner element so it lines up with the
+   text above rather than the container's padding edge. */
+.newsletter__channels {
+  padding-bottom: var(--space-7);
+}
+
+.channels {
+  border-top: var(--border-w) solid var(--ink-soft);
+  padding-top: var(--space-5);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-5);
+}
+
+.channels__heading {
+  color: var(--paper-3);
+  margin: 0;
+}
+
+.channels__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.channel {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-2) var(--space-4);
+  background: var(--paper);
+  color: var(--ink);
+  border: var(--border-w) solid var(--ink);
+  box-shadow: 4px 4px 0 var(--lime);
+  text-decoration: none;
+  transition:
+    transform var(--dur-fast) var(--ease-snap),
+    box-shadow var(--dur-fast) var(--ease-snap);
+}
+
+.channel:hover,
+.channel:focus-visible {
+  color: var(--ink);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--lime);
+}
+
+.channel:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.channel__label {
+  font-family: var(--font-pixel);
+  font-weight: 700;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.channel__handle {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
 }
 
 .newsletter__trap {

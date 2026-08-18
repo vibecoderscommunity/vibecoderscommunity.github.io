@@ -241,6 +241,8 @@ Images are shown as a square, so square or centre-weighted photos work best.
   `NEXT →` chip (label + flavour) and the `LAST →` line
 - **`newsletter`** — heading, sub-line, confirmation message, and the city
   options offered in the form
+- **`channels`** — the Discord / LinkedIn links under the signup form: a
+  `heading` and a `links` list of `label`, `handle` and `url`
 
 > **Updating the next meetup date** is just editing `chapters[].next.label`.
 

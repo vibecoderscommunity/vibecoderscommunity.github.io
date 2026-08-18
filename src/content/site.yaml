@@ -32,6 +32,7 @@ chapters:
     name: Tokyo
     logo: ./chapters/tokyo.avif
     luma: https://luma.com/vibecoderstokyo
+    linkedin: https://linkedin.com/company/vibe-coders-tokyo
     next:
       label: AUG 19, 2026
       flavor: gold
@@ -63,3 +64,19 @@ newsletter:
       label: Singapore
     - value: else
       label: Somewhere else
+
+# ---------------------------------------------------------------------------
+# Channels — the chat and social links shown under the newsletter form.
+#   label   platform name, rendered in the pixel font
+#   handle  the short line under it; what people would type or search for
+#   url     absolute link, opened in a new tab
+# ---------------------------------------------------------------------------
+channels:
+  heading: Or come hang out with us
+  links:
+    - label: Discord
+      handle: discord.gg/fyh4PdsjnU
+      url: https://discord.gg/fyh4PdsjnU
+    - label: LinkedIn
+      handle: vibe-coders-tokyo
+      url: https://www.linkedin.com/company/vibe-coders-tokyo/
