@@ -9,7 +9,7 @@ import { site } from '@/lib/content'
     <div class="site-footer__inner container">
       <div>
         <div class="site-footer__brand">
-          <SiteWordmark suffix="Tokyo & Singapore" />
+          <SiteWordmark suffix="" />
         </div>
         <p class="site-footer__about">{{ site.about }}</p>
       </div>

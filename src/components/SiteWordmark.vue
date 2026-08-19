@@ -5,7 +5,7 @@ defineProps<{ suffix?: string }>()
 
 <template>
   <span class="wordmark">
-    VIBE C<span class="wordmark__o">O</span>DERS MEETUP<template v-if="suffix">
+    VIBE C<span class="wordmark__o">O</span>DERS TOKYO &amp; SINGAPORE MEETUP<template v-if="suffix">
       <span class="wordmark__suffix">{{ suffix }}</span>
     </template>
   </span>
