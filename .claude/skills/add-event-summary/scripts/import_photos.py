@@ -100,9 +100,11 @@ def untracked(paths):
     """Which of these files git has no copy of — i.e. would be lost outright."""
     missing = []
     for p in paths:
-        r = subprocess.run(["git", "ls-files", "--error-unmatch", p],
-                           capture_output=True,
-                           cwd=os.path.dirname(os.path.abspath(p)) or ".")
+        # Absolute on both sides: git resolves a pathspec relative to cwd, so a
+        # repo-relative path checked from the file's own directory never matches.
+        full = os.path.abspath(p)
+        r = subprocess.run(["git", "ls-files", "--error-unmatch", full],
+                           capture_output=True, cwd=os.path.dirname(full) or ".")
         if r.returncode != 0:
             missing.append(p)
     return missing
