@@ -1,7 +1,6 @@
 ---
 title: Secure Vibe Coded Apps
-date: 2026-07-08
-meta: WED, JUL 31 
+date: 2026-07-31
 chapter: singapore
 flavor: light-blue
 eyebrow: complete

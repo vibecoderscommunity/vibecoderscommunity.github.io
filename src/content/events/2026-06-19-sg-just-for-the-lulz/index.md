@@ -1,7 +1,6 @@
 ---
 title: Just for the lulz
 date: 2026-06-19
-meta: WED, JUN 19
 chapter: singapore
 flavor: gold
 tags:

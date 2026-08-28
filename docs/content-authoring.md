@@ -163,7 +163,7 @@ file. Commit and push when it looks right.
 | --- | --- | --- |
 | `title` | ✅ | Event name. Wrap in quotes if it contains `#` — `"Tokyo Vibe Coders #3"` — because an unquoted `#` starts a YAML comment. |
 | `date` | ✅ | `YYYY-MM-DD`. Sorts the site, newest first. Falls back to the date in the folder name. |
-| `meta` | | The mono line under the title, e.g. `WED, SEP 16 · 7-9PM · SHIBUYA`. Free text. |
+| `meta` | | The mono line under the title. Defaults to the weekday, date and chapter from `date:` — `FRI, SEP 11 · TOKYO`. Set it only to add a time or venue: `WED, SEP 16 · 7-9PM · SHIBUYA`. |
 | `blurb` | | One line shown on the event card. |
 | `summary` | | Longer line for the "Coming up" teaser. Defaults to `blurb`. |
 | `tags` | | List of short labels rendered as flavour-coloured tags. |
@@ -237,14 +237,19 @@ Images are shown as a square, so square or centre-weighted photos work best.
 - **`description`** — the hero paragraph, and the site's meta description
 - **`about`** — the footer blurb
 - **`url`** — the deployed origin, used for canonical links and `sitemap.xml`
-- **`chapters`** — the "Two cities, one vibe" cards: logo, lu.ma link, the
-  `NEXT →` chip (label + flavour) and the `LAST →` line
+- **`chapters`** — the "Two cities, one vibe" cards: logo, lu.ma link, and the
+  flavour of the `NEXT →` chip. The two **dates are derived**, not written here
 - **`newsletter`** — heading, sub-line, confirmation message, and the city
   options offered in the form
 - **`channels`** — the Discord / LinkedIn links under the signup form: a
   `heading` and a `links` list of `label`, `handle` and `url`
 
-> **Updating the next meetup date** is just editing `chapters[].next.label`.
+> **You do not update the next meetup date.** The `NEXT →` chip is the
+> chapter's soonest folder in `upcoming/`, and `LAST →` its most recent folder
+> in `events/`, both read from that event's `date:`. Adding an upcoming event,
+> or moving a finished one into `events/`, updates both cards on the next
+> build. Set `next.label` or `last` only to say something a date cannot — the
+> chip falls back to `TBA` on its own when a chapter has nothing scheduled.
 
 ### Adding a chapter
 

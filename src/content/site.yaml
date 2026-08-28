@@ -22,9 +22,16 @@ url: https://vibecoders.fyi
 
 # ---------------------------------------------------------------------------
 # Chapters — rendered as the "Two cities, one vibe" cards.
-#   next.label   free text; shown in the flavour-coloured chip
+#
+# The two dates are DERIVED, not written here:
+#   next  the chapter's soonest event in src/content/upcoming/, or TBA
+#   last  the chapter's most recent event in src/content/events/
+# Both read the `date:` in that event's index.md, so moving a folder from
+# upcoming/ to events/ updates these cards on the next build — nothing to edit.
+#
 #   next.flavor  one of: gold lime purple peach red-tint light-navy light-blue
-#   last         free text; the muted "LAST → …" line
+#   next.label   OPTIONAL override; set it only to say what a date cannot
+#   last         OPTIONAL override, same deal
 #   logo         path relative to this file; any image format Vite can handle
 # ---------------------------------------------------------------------------
 chapters:
@@ -34,18 +41,14 @@ chapters:
     luma: https://luma.com/vibecoderstokyo
     linkedin: https://linkedin.com/company/vibe-coders-tokyo
     next:
-      label: AUG 19, 2026
       flavor: gold
-    last: JUL 8, 2026
 
   - id: singapore
     name: Singapore
     logo: ./chapters/singapore.png
     luma: https://luma.com/VibeCodersSG
     next:
-      label: TBA
       flavor: lime
-    last: FRI, JUL 31
 
 # ---------------------------------------------------------------------------
 # Newsletter band copy. `highlight` is the word rendered in lime.

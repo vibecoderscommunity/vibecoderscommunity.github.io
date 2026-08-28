@@ -14,6 +14,9 @@ declare module 'virtual:content' {
     slug: string
     date: string
     title: string
+    /** The mono line under the title. Defaults to `FRI, SEP 11 · TOKYO`,
+     *  derived from `date` and `chapter`; frontmatter overrides it to add a
+     *  time or venue. */
     meta: string
     chapter: string | null
     flavor: string
@@ -36,7 +39,10 @@ declare module 'virtual:content' {
     name: string
     logo: string
     luma: string
+    /** `label` is the chapter's soonest upcoming event, or `TBA`. Derived at
+     *  build time unless site.yaml overrides it, so it is never missing. */
     next: { label: string; flavor: string }
+    /** The chapter's most recent past event, derived the same way. */
     last: string
   }
 

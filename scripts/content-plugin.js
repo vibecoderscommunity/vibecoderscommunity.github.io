@@ -131,6 +131,34 @@ function todayIso() {
   return new Date().toISOString().slice(0, 10)
 }
 
+const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+const DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
+
+/**
+ * Splits `YYYY-MM-DD` into its parts plus a weekday.
+ *
+ * Built as a UTC date and read back with the UTC getters so the weekday does
+ * not shift for a builder west of Greenwich — a local-time `new Date(iso)`
+ * would render Sep 11 as THU in California.
+ */
+function dateParts(iso) {
+  const [y, m, d] = iso.split('-').map(Number)
+  return { y, m, d, weekday: DAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()] }
+}
+
+/** `2026-09-11` → `SEP 11, 2026`, the format the chapter chips use. */
+function chapterDate(iso) {
+  const { y, m, d } = dateParts(iso)
+  return `${MONTHS[m - 1]} ${d}, ${y}`
+}
+
+/** `2026-09-11` + `tokyo` → `FRI, SEP 11 · TOKYO`, the default `meta` line. */
+function metaLine(iso, chapterName) {
+  const { m, d, weekday } = dateParts(iso)
+  const day = `${weekday}, ${MONTHS[m - 1]} ${d}`
+  return chapterName ? `${day} · ${chapterName.toUpperCase()}` : day
+}
+
 /**
  * Loads one `<YYYY-MM-DD-slug>/index.md` folder.
  *
@@ -268,12 +296,34 @@ export function buildContent(root) {
   const site = loadSite(contentDir, assets)
   const hero = loadHero(contentDir, assets)
 
+  const chapters = site.chapters ?? []
+  const chapterOf = (entry) => chapters.find((c) => c.id === entry.chapter)
+
   // An upcoming event without its own `luma:` falls back to the chapter's
   // lu.ma calendar, so the signup button is never missing.
   for (const entry of upcoming) {
-    if (!entry.luma) {
-      entry.luma = site.chapters?.find((c) => c.id === entry.chapter)?.luma ?? null
+    if (!entry.luma) entry.luma = chapterOf(entry)?.luma ?? null
+  }
+
+  // `meta:` defaults to the event's own date and chapter, so the weekday can
+  // never drift out of sync with `date:`. Frontmatter still wins, which is how
+  // an entry adds the time and venue (`WED, JUL 8 · 7-9PM · GOOGLE SHIBUYA`).
+  for (const entry of [...events, ...upcoming]) {
+    if (!entry.meta) entry.meta = metaLine(entry.date, chapterOf(entry)?.name)
+  }
+
+  // Chapter card dates are derived the same way, so they cannot go stale: the
+  // "NEXT →" chip is that chapter's soonest event still to come, and "LAST →"
+  // its most recent past one. Both collections are already sorted, so `find`
+  // returns the right end of each. A label written in site.yaml still wins.
+  for (const chapter of chapters) {
+    const next = upcoming.find((e) => e.chapter === chapter.id && !e.past)
+    const last = events.find((e) => e.chapter === chapter.id && e.past)
+    chapter.next = {
+      ...chapter.next,
+      label: chapter.next?.label || (next ? chapterDate(next.date) : 'TBA'),
     }
+    chapter.last = chapter.last || (last ? chapterDate(last.date) : 'TBA')
   }
 
   return { assets, events, upcoming, site, hero }

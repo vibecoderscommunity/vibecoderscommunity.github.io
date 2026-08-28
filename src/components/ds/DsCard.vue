@@ -1,8 +1,9 @@
 <script setup lang="ts">
 /** Vibe Coders Design System — Card. Square image, title, meta, blurb, tags. */
+import { computed, useSlots } from 'vue'
 import DsTag from './DsTag.vue'
 
-defineProps<{
+const props = defineProps<{
   image?: string
   imageAlt?: string
   eyebrow?: string
@@ -12,12 +13,32 @@ defineProps<{
   flavor?: string
   hoverable?: boolean
 }>()
+
+const slots = useSlots()
+
+/**
+ * Whether anything would actually render inside the body.
+ *
+ * Every child below is individually `v-if`ed, so a card given only an `image`
+ * — the "Coming up" posters — would otherwise render an empty padded box as a
+ * white strip under the artwork.
+ */
+const hasBody = computed(() =>
+  Boolean(
+    props.eyebrow ||
+      props.title ||
+      props.meta ||
+      props.tags?.length ||
+      slots.default ||
+      slots.footer,
+  ),
+)
 </script>
 
 <template>
-  <div class="ds-card" :class="{ hoverable }">
+  <div class="ds-card" :class="{ hoverable, 'ds-card--bare': !hasBody }">
     <img v-if="image" :src="image" :alt="imageAlt || ''" class="ds-card__image" loading="lazy" />
-    <div class="ds-card__body">
+    <div v-if="hasBody" class="ds-card__body">
       <div
         v-if="eyebrow"
         class="ds-card__eyebrow"
@@ -60,6 +81,12 @@ defineProps<{
   aspect-ratio: 1;
   object-fit: cover;
   border-bottom: var(--border-w) solid var(--ink);
+}
+
+/* With no body beneath it, the image's divider would sit directly on the
+   card's own bottom border and read as a double-thick rule. */
+.ds-card--bare .ds-card__image {
+  border-bottom: 0;
 }
 
 .ds-card__body {
