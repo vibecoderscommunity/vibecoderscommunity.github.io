@@ -30,6 +30,7 @@ pnpm run preview            # http://localhost:8787
 | …do this | Read this |
 | --- | --- |
 | Add an event, hero photos, or change site copy | [`docs/content-authoring.md`](docs/content-authoring.md) |
+| Let Claude Code do it for you | [Authoring skills](#authoring-skills), below |
 | Set up Cloudflare and the newsletter database | [`docs/cloudflare-setup.md`](docs/cloudflare-setup.md) |
 | Know where secrets go (this repo is public) | [`docs/cloudflare-setup.md#secrets-and-configuration`](docs/cloudflare-setup.md#secrets-and-configuration) |
 | Understand whether we need R2 (we don't, yet) | [`docs/r2-storage.md`](docs/r2-storage.md) |
@@ -39,6 +40,47 @@ pnpm run preview            # http://localhost:8787
 `src/content/events/YYYY-MM-DD-your-slug/`, put an `index.md` and a `poster.avif`
 in it, drop photos into a `photos/` subfolder, and push. That's the whole
 workflow.
+
+### Authoring skills
+
+Two [Claude Code](https://claude.com/claude-code) skills in `.claude/skills/`
+do that work for you. Run them from the repo root with a slash command; each
+asks for what it needs and shows you the result before you commit.
+
+| Skill | Use it when | What it does |
+| --- | --- | --- |
+| `/add-event` | A meetup is scheduled and listed on lu.ma | Reads the lu.ma page, writes `src/content/upcoming/YYYY-MM-DD-<loc>-<slug>/index.md`, and saves the cover as the poster |
+| `/add-event-summary` | The meetup has happened and you have a write-up | Moves the folder to `events/`, converts the recap to Markdown, and imports the photos |
+
+```bash
+/add-event https://luma.com/abc123     # then confirm what it inferred
+/add-event-summary                     # paste the recap, point it at the photos
+```
+
+Both are ordinary Markdown and Python — read `SKILL.md` in either folder to see
+exactly what they do, and edit them when the house style moves on.
+
+**They exist because three things here are easy to get wrong by hand:**
+
+- **lu.ma descriptions.** The page's `og:` tags are truncated and its social
+  image is a cropped 800×420 card, so `add-event` reads the event out of the
+  page data instead and converts the real description to Markdown.
+- **Pasted recaps.** Markdown is rendered with `breaks: false`, so the single
+  newlines in a Discord message collapse into one run-on paragraph. Custom
+  emoji (`<:name:123>`) and Unicode fake-bold (`𝐃𝐞𝐦𝐨𝐬`) render as garbage.
+  `add-event-summary` fixes all of it and gives bare URLs real link text.
+- **Photo size.** Nothing in the build resizes images and an event page loads
+  its whole grid at once, so a folder of camera originals ships in full to
+  every visitor. Photos are imported at 1600px AVIF — usually a 90%+ saving.
+
+To shrink a photo folder that predates the skill:
+
+```bash
+python3 .claude/skills/add-event-summary/scripts/import_photos.py \
+  src/content/events/<folder> --in-place --dry-run
+```
+
+It refuses to overwrite anything git has no copy of, so commit first.
 
 ---
 
@@ -82,6 +124,10 @@ src/
 scripts/
 ├── content-plugin.js         Vite plugin: src/content/ → virtual:content
 └── prerender.js              renders every route to static HTML
+
+.claude/skills/               Claude Code authoring skills
+├── add-event/                lu.ma link → an upcoming event
+└── add-event-summary/        recap + photos → a past event
 
 worker/index.ts               Cloudflare Worker — /api/subscribe → D1
 migrations/                   D1 schema
