@@ -40,7 +40,7 @@ url: https://vibecoders.fyi
 chapters:
   - id: tokyo
     name: Tokyo
-    logo: ./chapters/tokyo.avif
+    logo: ./chapters/vibe-coders-tokyo.png
     luma: https://luma.com/vibecoderstokyo
     linkedin: https://linkedin.com/company/vibe-coders-tokyo
     next:
@@ -48,14 +48,14 @@ chapters:
 
   - id: singapore
     name: Singapore
-    logo: ./chapters/singapore.png
+    logo: ./chapters/vibe-coders-sg.png
     luma: https://luma.com/VibeCodersSG
     next:
       flavor: lime
 
   - id: columbus
     name: Columbus
-    logo: ./chapters/cbus.avif
+    logo: ./chapters/vibe-coders-cbus.png
     luma: https://luma.com/vibecoderscolumbus
     next:
       flavor: purple
