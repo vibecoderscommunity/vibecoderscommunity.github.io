@@ -21,11 +21,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Keep in step with `devEngines` in package.json, which this action
+      # does not read — it only understands a top-level `packageManager`.
       - uses: pnpm/action-setup@v4
+        with:
+          version: 11.24.0
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
