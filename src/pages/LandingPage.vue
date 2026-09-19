@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import SectionTitle from '@/components/SectionTitle.vue'
 import PhotoRotator from '@/components/PhotoRotator.vue'
@@ -17,6 +18,23 @@ useHead(() => ({
   description: site.description,
   path: '/',
 }))
+
+/** Chapters that have at least one past event, in `site.yaml` order. */
+const eventChapters = site.chapters
+  .map((chapter) => ({
+    ...chapter,
+    count: allEvents.filter((event) => event.chapter === chapter.id).length,
+  }))
+  .filter((chapter) => chapter.count > 0)
+
+/** `null` shows every chapter. */
+const chapterFilter = ref<string | null>(null)
+
+const filteredEvents = computed(() =>
+  chapterFilter.value
+    ? allEvents.filter((event) => event.chapter === chapterFilter.value)
+    : allEvents,
+)
 </script>
 
 <template>
@@ -73,8 +91,33 @@ useHead(() => ({
 
     <section id="events" class="section container events-section">
       <SectionTitle>Past events</SectionTitle>
+      <div
+        v-if="eventChapters.length > 1"
+        class="event-filter"
+        role="group"
+        aria-label="Filter past events by chapter"
+      >
+        <button
+          type="button"
+          class="event-filter__chip"
+          :aria-pressed="chapterFilter === null"
+          @click="chapterFilter = null"
+        >
+          All <span class="event-filter__count">{{ allEvents.length }}</span>
+        </button>
+        <button
+          v-for="chapter in eventChapters"
+          :key="chapter.id"
+          type="button"
+          class="event-filter__chip"
+          :aria-pressed="chapterFilter === chapter.id"
+          @click="chapterFilter = chapter.id"
+        >
+          {{ chapter.name }} <span class="event-filter__count">{{ chapter.count }}</span>
+        </button>
+      </div>
       <div class="events">
-        <EventCard v-for="event in allEvents" :key="event.slug" :event="event" />
+        <EventCard v-for="event in filteredEvents" :key="event.slug" :event="event" />
       </div>
     </section>
   </div>
@@ -187,6 +230,59 @@ useHead(() => ({
 
 .events-section {
   padding-top: 0;
+}
+
+.event-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.event-filter__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 6px 12px;
+  color: var(--ink);
+  background: var(--white);
+  border: var(--border-w) solid var(--ink);
+  border-radius: 0;
+  box-shadow: var(--shadow-pixel-sm);
+  cursor: pointer;
+  transition:
+    transform var(--dur-fast) var(--ease-snap),
+    box-shadow var(--dur-fast) var(--ease-snap);
+}
+
+.event-filter__chip:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-pixel);
+}
+
+.event-filter__chip:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.event-filter__chip[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.event-filter__chip:focus-visible {
+  outline: var(--border-w) solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.event-filter__count {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  opacity: 0.7;
 }
 
 .events {

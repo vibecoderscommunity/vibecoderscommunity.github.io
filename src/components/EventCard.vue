@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import DsCard from './ds/DsCard.vue'
-import { flavorColor } from '@/lib/content'
+import { chapterById, flavorColor } from '@/lib/content'
 import type { EventEntry } from '@/lib/content'
 
 const props = defineProps<{ event: EventEntry }>()
@@ -10,6 +10,8 @@ const props = defineProps<{ event: EventEntry }>()
 const tags = computed(() =>
   props.event.tags.map((label) => ({ label, flavor: flavorColor(props.event.flavor) })),
 )
+
+const chapter = computed(() => chapterById(props.event.chapter))
 </script>
 
 <template>
@@ -23,6 +25,11 @@ const tags = computed(() =>
       hoverable
     >
       {{ event.blurb }}
+      <template v-if="chapter" #footer>
+        <span class="chip" :style="{ background: flavorColor(chapter.next?.flavor) }">
+          {{ chapter.name }}
+        </span>
+      </template>
     </DsCard>
   </RouterLink>
 </template>
