@@ -169,6 +169,7 @@ useHead(() =>
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
+  margin-top: var(--space-6);
 }
 
 .event__note {
