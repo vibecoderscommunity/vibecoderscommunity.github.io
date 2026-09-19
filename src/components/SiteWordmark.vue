@@ -1,11 +1,11 @@
 <script setup lang="ts">
-/** "VIBE CODERS MEETUP" with the brand's red O. */
+/** "VIBE CODERS COMMUNITY" with the brand's red O. */
 defineProps<{ suffix?: string }>()
 </script>
 
 <template>
   <span class="wordmark">
-    VIBE C<span class="wordmark__o">O</span>DERS TOKYO &amp; SG<template v-if="suffix">
+    VIBE C<span class="wordmark__o">O</span>DERS COMMUNITY<template v-if="suffix">
       <span class="wordmark__suffix">{{ suffix }}</span>
     </template>
   </span>

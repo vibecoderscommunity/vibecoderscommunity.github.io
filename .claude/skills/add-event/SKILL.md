@@ -49,8 +49,8 @@ photos on a CDN this site should not hotlink).
 
 - **Date** — the `date` from the script. It is the date in the event's own
   timezone, which is not always the UTC one.
-- **loc** — `tok` for `Asia/Tokyo`, `sg` for `Asia/Singapore`. Add a new short
-  code for a new city.
+- **loc** — `tok` for `Asia/Tokyo`, `sg` for `Asia/Singapore`, `cbus` for
+  `America/New_York` (Columbus, OH). Add a new short code for a new city.
 - **slug** — 2–4 words from the distinctive part of the title, lowercase,
   hyphenated. Drop the recurring branding: `Vibe Coders Tokyo #10 - Fun Edition`
   → `fun`, `Vibe Coders SG #3 - Designing with AI, without the slop` →
@@ -80,7 +80,7 @@ summary: >-
 - **title** — the distinctive part, not the full lu.ma name (`Fun Edition`, not
   `Vibe Coders Tokyo #10 - Fun Edition - our tenth meetup! 🌈 ✨`). **Quote any
   title containing `#`** — unquoted, it starts a YAML comment.
-- **chapter** — `tokyo` or `singapore`, from the timezone.
+- **chapter** — `tokyo`, `singapore` or `columbus`, from the timezone.
 - **flavor** — pick one not used by the last few events. Check with
   `grep -h '^flavor:' src/content/upcoming/*/index.md src/content/events/*/index.md`.
   Valid: `gold` `lime` `purple` `peach` `red-tint` `light-navy` `light-blue`.

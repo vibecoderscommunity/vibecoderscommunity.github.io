@@ -15,7 +15,7 @@ import { site } from '@/lib/content'
       </div>
       <nav class="site-footer__links">
         <a
-          v-for="chapter in site.chapters"
+          v-for="chapter in site.chapters.filter((c) => c.luma)"
           :key="chapter.id"
           :href="chapter.luma"
           target="_blank"

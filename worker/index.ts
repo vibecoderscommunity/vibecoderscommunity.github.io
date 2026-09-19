@@ -22,7 +22,7 @@ interface SubscribePayload {
   website?: unknown
 }
 
-const ALLOWED_CITIES = new Set(['tokyo', 'singapore', 'else'])
+const ALLOWED_CITIES = new Set(['tokyo', 'singapore', 'columbus', 'else'])
 
 /**
  * Deliberately permissive: the goal is to reject obvious typos, not to

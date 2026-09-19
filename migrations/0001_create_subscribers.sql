@@ -1,4 +1,4 @@
--- Newsletter subscribers for the Vibe Coders Meetup site.
+-- Newsletter subscribers for the Vibe Coders Community site.
 --
 -- Apply with:
 --   pnpm run db:migrate:local   (local dev database used by `wrangler dev`)
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS subscribers (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
   -- Stored lower-cased and trimmed so the UNIQUE index actually de-duplicates.
   email       TEXT    NOT NULL UNIQUE,
-  -- 'tokyo' | 'singapore' | 'else' | NULL — matches site.yaml's newsletter.cities.
+  -- 'tokyo' | 'singapore' | 'columbus' | 'else' | NULL — matches site.yaml's newsletter.cities.
   city        TEXT,
   -- Where the signup came from, so a second form later stays distinguishable.
   source      TEXT    NOT NULL DEFAULT 'website',

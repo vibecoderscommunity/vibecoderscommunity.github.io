@@ -4,8 +4,8 @@
 # No HTML or Vue changes required.
 # ---------------------------------------------------------------------------
 
-title: Vibe Coders Meetup
-tagline: Tokyo · Singapore
+title: Vibe Coders Community
+tagline: Tokyo · Singapore · Columbus
 description: >-
   A cozy non-profit community to share our AI projects every month.
   We like to do fun group shareouts and the occasional workshop -
@@ -21,7 +21,7 @@ about: >-
 url: https://vibecoders.fyi
 
 # ---------------------------------------------------------------------------
-# Chapters — rendered as the "Two cities, one vibe" cards.
+# Chapters — rendered as the "Three cities, one vibe" cards.
 #
 # The two dates are DERIVED, not written here:
 #   next  the chapter's soonest event in src/content/upcoming/, or TBA
@@ -32,7 +32,10 @@ url: https://vibecoders.fyi
 #   next.flavor  one of: gold lime purple peach red-tint light-navy light-blue
 #   next.label   OPTIONAL override; set it only to say what a date cannot
 #   last         OPTIONAL override, same deal
-#   logo         path relative to this file; any image format Vite can handle
+#   logo         OPTIONAL path relative to this file; any image format Vite can
+#                handle. Without one the card shows `abbr` as a pixel-font tile
+#   abbr         OPTIONAL short name for that tile, e.g. CBUS
+#   luma         OPTIONAL lu.ma calendar; without one the RSVP button is hidden
 # ---------------------------------------------------------------------------
 chapters:
   - id: tokyo
@@ -50,6 +53,13 @@ chapters:
     next:
       flavor: lime
 
+  - id: columbus
+    name: Columbus
+    logo: ./chapters/cbus.avif
+    luma: https://luma.com/vibecoderscolumbus
+    next:
+      flavor: purple
+
 # ---------------------------------------------------------------------------
 # Newsletter band copy. `highlight` is the word rendered in lime.
 # ---------------------------------------------------------------------------
@@ -57,7 +67,7 @@ newsletter:
   heading: Sign up to be {highlight} of future events
   highlight: notified
   sub: >-
-    The next meetup in Tokyo and Singapore, straight to your inbox.
+    The next meetup in Tokyo, Singapore and Columbus, straight to your inbox.
     No spam, unsubscribe whenever.
   success: You're in! See you at the next one
   cities:
@@ -65,6 +75,8 @@ newsletter:
       label: Tokyo
     - value: singapore
       label: Singapore
+    - value: columbus
+      label: Columbus
     - value: else
       label: Somewhere else
 

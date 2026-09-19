@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "private": true,
   "type": "module",
-  "description": "Vibe Coders Meetup — Tokyo & Singapore",
+  "description": "Vibe Coders Community — Tokyo, Singapore & Columbus",
   "scripts": {
     "dev": "vite",
     "build": "vite build && vite build --ssr && node scripts/prerender.js",

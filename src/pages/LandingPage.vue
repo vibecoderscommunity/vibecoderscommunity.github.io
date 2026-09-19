@@ -13,7 +13,7 @@ import { allEvents, flavorColor, heroImages, site, upcomingEvents } from '@/lib/
 import { useHead } from '@/lib/head'
 
 useHead(() => ({
-  title: `${site.title} — Tokyo & Singapore`,
+  title: `${site.title} — Tokyo, Singapore & Columbus`,
   description: site.description,
   path: '/',
 }))
@@ -35,7 +35,7 @@ useHead(() => ({
     </section>
 
     <section id="chapters" class="section container">
-      <SectionTitle>Two cities, one vibe</SectionTitle>
+      <SectionTitle>Three cities, one vibe</SectionTitle>
       <div class="chapters">
         <ChapterCard v-for="chapter in site.chapters" :key="chapter.id" :chapter="chapter" />
       </div>
@@ -119,7 +119,7 @@ useHead(() => ({
 
 .chapters {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--space-5);
 }
 
@@ -203,15 +203,15 @@ useHead(() => ({
   .hero__body {
     max-width: none;
   }
+  .chapters {
+    grid-template-columns: 1fr;
+  }
   .events {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 780px) {
-  .chapters {
-    grid-template-columns: 1fr;
-  }
   .upcoming__item {
     grid-template-columns: 1fr;
     gap: var(--space-5);

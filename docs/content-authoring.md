@@ -12,7 +12,8 @@ src/content/
 │   └── 02-gemma-workshop.jpg
 ├── chapters/
 │   ├── tokyo.avif                     chapter logos
-│   └── singapore.png
+│   ├── singapore.png
+│   └── cbus.avif
 ├── upcoming/                          events that haven't happened yet
 │   └── 2026-08-19-models-models-models/
 │       ├── index.md                   frontmatter + what to expect
@@ -168,7 +169,7 @@ file. Commit and push when it looks right.
 | `summary` | | Longer line for the "Coming up" teaser. Defaults to `blurb`. |
 | `tags` | | List of short labels rendered as flavour-coloured tags. |
 | `flavor` | | Accent colour. See the list below. Defaults to `gold`. |
-| `chapter` | | `tokyo` or `singapore`. |
+| `chapter` | | `tokyo`, `singapore` or `columbus`. |
 | `luma` | | lu.ma event page. In `upcoming/` it's the signup button and defaults to the chapter calendar; in `events/` it's an optional "See it on Luma" link with no default. |
 | `eyebrow` | | Chip text, e.g. `Workshop, complete`. Defaults to `Upcoming` in `upcoming/`, `Recap` in `events/`. |
 | `slug` | | Override the URL slug. Defaults to the folder name minus the date. |
@@ -237,7 +238,7 @@ Images are shown as a square, so square or centre-weighted photos work best.
 - **`description`** — the hero paragraph, and the site's meta description
 - **`about`** — the footer blurb
 - **`url`** — the deployed origin, used for canonical links and `sitemap.xml`
-- **`chapters`** — the "Two cities, one vibe" cards: logo, lu.ma link, and the
+- **`chapters`** — the "Three cities, one vibe" cards: logo (or an `abbr` tile), lu.ma link, and the
   flavour of the `NEXT →` chip. The two **dates are derived**, not written here
 - **`newsletter`** — heading, sub-line, confirmation message, and the city
   options offered in the form
@@ -254,9 +255,11 @@ Images are shown as a square, so square or centre-weighted photos work best.
 ### Adding a chapter
 
 Add an entry to `chapters` and drop its logo in `src/content/chapters/`. The
-landing page grid picks it up automatically. If you add a third chapter, also
-add it to `newsletter.cities` so people can pick it, **and** to `ALLOWED_CITIES`
-in `worker/index.ts` so the API stores it rather than discarding it.
+landing page grid picks it up automatically. Until a chapter has a logo, give it
+an `abbr` (`CBUS`) and the card shows that as a pixel-font tile instead; until it
+has a lu.ma calendar, leave `luma` out and the RSVP button and footer link are
+hidden. Also add it to `newsletter.cities` so people can pick it, **and** to
+`ALLOWED_CITIES` in `worker/index.ts` so the API stores it rather than discarding it.
 
 ---
 

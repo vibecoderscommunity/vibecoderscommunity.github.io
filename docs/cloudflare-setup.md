@@ -106,7 +106,7 @@ pnpm exec wrangler d1 execute vibecoders-site --remote \
 | --- | --- |
 | `id` | auto-increment primary key |
 | `email` | **UNIQUE**. Stored trimmed and lower-cased, so `A@b.com` and `a@b.com ` are the same person. |
-| `city` | `tokyo` \| `singapore` \| `else` \| `NULL`. Anything else is discarded rather than stored. |
+| `city` | `tokyo` \| `singapore` \| `columbus` \| `else` \| `NULL`. Anything else is discarded rather than stored. |
 | `source` | Where the signup came from. `website` for the form. |
 | `unsubscribed_at` | Set when someone opts out. Rows are kept so the opt-out is honoured. |
 | `created_at` / `updated_at` | UTC timestamps. |

@@ -37,8 +37,11 @@ declare module 'virtual:content' {
   export interface Chapter {
     id: string
     name: string
-    logo: string
-    luma: string
+    /** Absent until the chapter has a logo; the card shows `abbr` instead. */
+    logo?: string
+    abbr?: string
+    /** Absent until the chapter has a lu.ma calendar. */
+    luma?: string
     /** `label` is the chapter's soonest upcoming event, or `TBA`. Derived at
      *  build time unless site.yaml overrides it, so it is never missing. */
     next: { label: string; flavor: string }

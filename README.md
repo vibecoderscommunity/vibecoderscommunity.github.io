@@ -1,6 +1,6 @@
-# Vibe Coders Meetup
+# Vibe Coders Community
 
-The website for the Vibe Coders Meetup — Tokyo & Singapore.
+The website for the Vibe Coders Community — Tokyo, Singapore & Columbus.
 
 A Vue 3 site, prerendered to static HTML, deployed on Cloudflare Workers.
 Events are Markdown files; photos are images you drop into a folder. Nobody

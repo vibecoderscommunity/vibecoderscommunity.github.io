@@ -14,7 +14,7 @@ const links = [
 <template>
   <header class="site-header">
     <div class="site-header__inner container">
-      <RouterLink to="/" class="site-header__brand" aria-label="Vibe Coders Meetup — home">
+      <RouterLink to="/" class="site-header__brand" aria-label="Vibe Coders Community — home">
         <SiteWordmark />
       </RouterLink>
       <nav class="site-header__nav">
