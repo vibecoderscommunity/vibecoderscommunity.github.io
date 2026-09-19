@@ -17,7 +17,7 @@ Design system for **Vibe Coders Tokyo** (a.k.a. "Tokyo Vibe Coders") — a cozy,
 ## VISUAL FOUNDATIONS
 
 - **Palette:** warm ink (#17130d) on warm paper (#f5efe1); pixel red (#e23d28, the logo's red "O") is THE accent. Each event gets a "flavor" secondary: navy/blue, lime, purple, gold, peach — used one at a time, never all at once. Semantic tokens in `tokens/colors.css`.
-- **Type:** Silkscreen (pixel, 700) for hero/display/brand moments and buttons; Handjet (600/700) for section headers and card titles — 8-bit inspired but readable; JetBrains Mono for body and all UI; DotGothic16 for Japanese pixel accents. Loaded from Google Fonts CDN (see FLAGS). Mono runs wide — keep sizes modest, line-height 1.65 for body.
+- **Type:** Silkscreen (pixel, 700) for hero/display/brand moments and buttons; Silkscreen (700) also for section headers and card titles, tracked tight (`--tracking-heading`, -0.08em) so the wide-set pixel face stays readable; JetBrains Mono for body and all UI; DotGothic16 for Japanese pixel accents. Loaded from Google Fonts CDN (see FLAGS). Mono runs wide — keep sizes modest, line-height 1.65 for body.
 - **Backgrounds:** flat warm paper by default; soft grainy radial gradient blobs (red/purple/gold) for hero/poster moments, echoing event artwork. Optional fine grain texture. Dark mode = ink surface with paper text (used in posters, not the default site).
 - **Corners:** none. `border-radius: 0` everywhere (2px max on tiny chips). Pixel-stepped corners on featured cards via clip-path.
 - **Borders:** 2px solid ink (3px heavy). Borders do the work shadows normally do.

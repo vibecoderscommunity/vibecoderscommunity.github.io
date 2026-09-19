@@ -99,6 +99,7 @@ useHead(() =>
 
 .event__title {
   font-family: var(--font-heading);
+  letter-spacing: var(--tracking-heading);
   font-size: var(--text-3xl);
   margin: 0 0 var(--space-2);
   text-transform: uppercase;
@@ -133,6 +134,7 @@ useHead(() =>
 
 .event__heading {
   font-family: var(--font-heading);
+  letter-spacing: var(--tracking-heading);
   font-size: var(--text-xl);
   text-transform: uppercase;
   margin: var(--space-6) 0 var(--space-3);

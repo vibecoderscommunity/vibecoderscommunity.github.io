@@ -164,6 +164,7 @@ async function submit() {
 
 .newsletter__heading {
   font-family: var(--font-heading);
+  letter-spacing: var(--tracking-heading);
   color: var(--paper);
   font-size: var(--text-2xl);
   margin: 0;

@@ -1,6 +1,6 @@
 :root{
 --font-pixel:"Silkscreen",monospace; /* display, hero, brand moments, buttons */
---font-heading:"Handjet","Silkscreen",monospace; /* section headers, card titles — readable 8-bit */
+--font-heading:"Silkscreen",monospace; /* section headers, card titles — readable 8-bit */
 --font-mono:"JetBrains Mono",ui-monospace,monospace; /* body, UI, everything else */
 --font-pixel-jp:"DotGothic16","Silkscreen",monospace; /* Japanese pixel accents */
 /* scale — mono runs wide, so sizes stay modest */
@@ -17,9 +17,10 @@
 --leading-body:1.65;
 --tracking-wide:0.06em;
 --tracking-caps:0.12em;
+--tracking-heading:-0.08em; /* Silkscreen is wide-set; pulls section headings together */
 }
 body{font-family:var(--font-mono);font-size:var(--text-base);line-height:var(--leading-body);color:var(--text-body);background:var(--surface-page)}
 h1{font-family:var(--font-pixel);font-weight:700;line-height:var(--leading-tight);letter-spacing:0}
-h2,h3{font-family:var(--font-heading);font-weight:700;line-height:var(--leading-tight);letter-spacing:0.01em}
+h2,h3{font-family:var(--font-heading);font-weight:700;line-height:var(--leading-tight);letter-spacing:var(--tracking-heading)}
 a{color:var(--red);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:2px}
 a:hover{color:var(--red-dark);background:var(--red-tint)}

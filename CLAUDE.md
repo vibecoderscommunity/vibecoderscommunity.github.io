@@ -85,8 +85,8 @@ Non-negotiable brand rules:
   (`4px 4px 0 var(--ink)`), never blurred
 - Hover lifts (`translate(-2px,-2px)`, shadow grows to 6px); press sinks
   (`translate(2px,2px)`, shadow collapses); 120–180ms; no fades or bounces
-- Fonts: Silkscreen (pixel display), Handjet (section headings), JetBrains Mono
-  (body/UI)
+- Fonts: Silkscreen (pixel display, and section headings tracked tight with
+  `--tracking-heading`), JetBrains Mono (body/UI)
 - Event "flavors" are named tokens (`gold`, `lime`, `purple`, `peach`,
   `red-tint`, `light-navy`, `light-blue`) resolved by `flavorColor()`. `navy` and
   `blue` are too dark to sit behind ink text — don't use them as event flavours.

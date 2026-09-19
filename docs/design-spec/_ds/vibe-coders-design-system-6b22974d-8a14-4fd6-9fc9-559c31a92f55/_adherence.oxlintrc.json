@@ -38,8 +38,8 @@
         "message": "Raw px value — use a design-system spacing token via var()."
       },
       {
-        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Silkscreen|Handjet|JetBrains Mono|DotGothic16))/i]",
-        "message": "Font not provided by the design system. Available: Silkscreen, Handjet, JetBrains Mono, DotGothic16."
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Silkscreen|JetBrains Mono|DotGothic16))/i]",
+        "message": "Font not provided by the design system. Available: Silkscreen, JetBrains Mono, DotGothic16."
       },
       {
         "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|size|flavor|disabled|type|onClick|style|children|key|ref|className|style|children)$/]",
@@ -187,6 +187,7 @@
       "--text-xl",
       "--text-xs",
       "--tracking-caps",
+      "--tracking-heading",
       "--tracking-wide",
       "--warn",
       "--white"
@@ -241,6 +242,7 @@
       "--leading-body": "font",
       "--tracking-wide": "font",
       "--tracking-caps": "font",
+      "--tracking-heading": "font",
       "--space-1": "spacing",
       "--space-2": "spacing",
       "--space-3": "spacing",
@@ -267,7 +269,6 @@
     },
     "fontFamilies": [
       "DotGothic16",
-      "Handjet",
       "JetBrains Mono",
       "Silkscreen"
     ]

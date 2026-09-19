@@ -5,6 +5,7 @@
 <style scoped>
 .section-title {
   font-family: var(--font-heading);
+  letter-spacing: var(--tracking-heading);
   font-size: var(--text-3xl);
   margin: 0 0 var(--space-5);
   text-transform: uppercase;

@@ -151,6 +151,7 @@ useHead(() => ({
 
 .upcoming__title {
   font-family: var(--font-heading);
+  letter-spacing: var(--tracking-heading);
   font-size: var(--text-3xl);
   margin: var(--space-3) 0;
   text-transform: uppercase;

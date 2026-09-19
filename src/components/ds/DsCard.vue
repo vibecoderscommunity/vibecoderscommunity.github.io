@@ -109,6 +109,7 @@ const hasBody = computed(() =>
 
 .ds-card__title {
   font-family: var(--font-heading);
+  letter-spacing: var(--tracking-heading);
   font-weight: 700;
   font-size: var(--text-xl);
   line-height: var(--leading-tight);
