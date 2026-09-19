@@ -19,17 +19,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      # Keep in step with `devEngines` in package.json, which this action
-      # does not read — it only understands a top-level `packageManager`.
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11.24.0
+      # pnpm and Node versions both come from `devEngines` in package.json.
+      - uses: pnpm/action-setup@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version-file: package.json
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
@@ -39,7 +36,7 @@ jobs:
       - run: pnpm run build
 
       - name: Deploy to Cloudflare
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
