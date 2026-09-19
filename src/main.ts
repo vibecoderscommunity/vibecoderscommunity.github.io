@@ -11,6 +11,7 @@ import LandingPage from './pages/LandingPage.vue'
 import EventPage from './pages/EventPage.vue'
 import UpcomingPage from './pages/UpcomingPage.vue'
 import NotFoundPage from './pages/NotFoundPage.vue'
+import LogoPage from './pages/LogoPage.vue'
 import { createHead } from './lib/head'
 import './styles/global.css'
 
@@ -18,6 +19,7 @@ const routes: RouteRecordRaw[] = [
   { path: '/', name: 'home', component: LandingPage },
   { path: '/events/:slug', name: 'event', component: EventPage },
   { path: '/upcoming/:slug', name: 'upcoming', component: UpcomingPage },
+  { path: '/logo', name: 'logo', component: LogoPage },
   // Prerendered to `404.html`, which Cloudflare serves for unknown paths.
   { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFoundPage },
 ]

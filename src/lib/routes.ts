@@ -12,6 +12,7 @@ export const routesToPrerender: string[] = [
   '/',
   ...upcoming.map((entry) => entry.path),
   ...events.map((event) => event.path),
+  '/logo/',
   '/404',
 ]
 
