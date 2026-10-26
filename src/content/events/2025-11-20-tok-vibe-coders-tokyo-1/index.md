@@ -2,7 +2,7 @@
 # Quoted because an unquoted `#` starts a YAML comment.
 title: "Tokyo Vibe Coders #1"
 date: 2025-11-20
-meta: THU, DEC 17 · 6-8PM · GOOGLE SHIBUYA
+meta: THU, NOV 20 · 6-8PM · GOOGLE SHIBUYA
 chapter: tokyo
 flavor: red-tint
 luma: https://luma.com/uf2xn9ow
